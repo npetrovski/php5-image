@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit bootstrap="phpunit.bootstrap.inc" colors="true">
+	<logging>
+		<log type="coverage-html" target="coverage-report" charset="UTF-8"/>
+	</logging>
+	<testsuites>
+		<testsuite name="Image Test Suite">
+			<directory suffix=".php">./Image</directory>
+		</testsuite>
+	</testsuites>
+
+</phpunit>
