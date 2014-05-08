@@ -1,7 +1,5 @@
 # PHP5 Image Manipulation Library 
 
-<g:plusone size="medium"></g:plusone>
-
 PHP5 Image is a full object-oriented library for an image manipulation by PHP and GD2. It is an extended version of [http://code.google.com/p/php-image/ php-image] project and can be used either standalone or inside [http://framework.zend.com/ Zend Framework] projects.
 
 The project currently provides readers for PNG, JPEG, GIF, PSD, ICO image-file types, and outputs all GD2-supported types.
