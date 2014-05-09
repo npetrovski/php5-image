@@ -41,13 +41,15 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
 
-require_once 'Image/Plugin/Base.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Base;
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
+use Image\Helper\Color;
 
-class Image_Fx_Canvassize extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Canvassize extends FxBase implements PluginInterface {
 
     public function __construct($t = 10, $r = 10, $b = 10, $l = 10, $color = "") {
         $this->t = $t;
@@ -60,20 +62,23 @@ class Image_Fx_Canvassize extends Image_Fx_Abstract implements Image_Plugin_Inte
     public function generate() {
         $width = $this->_owner->imagesx();
         $height = $this->_owner->imagesy();
-        $temp = new Image_Image();
+
+        $temp = new Base();
         if (!empty($this->color)) {
             $temp->createImageTrueColor($width + ($this->r + $this->l), $height +
                     ($this->t + $this->b));
-            $arrColor = Image_Image::hexColorToArrayColor($this->color);
+            $arrColor = Color::hexColorToArrayColor($this->color);
             $tempcolor = imagecolorallocate($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
             imagefilledrectangle($temp->image, 0, 0, $temp->imagesx(), $temp->imagesy(), $tempcolor);
         } else {
             $temp->createImageTrueColorTransparent($width + ($this->r + $this->l), $height +
                     ($this->t + $this->b));
         }
+
         imagecopy($temp->image, $this->_owner->image, $this->l, $this->t, 0, 0, $width, $height);
         $this->_owner->image = $temp->image;
         unset($temp);
+
         return true;
     }
 

@@ -120,7 +120,7 @@ class ImageTest extends PHPUnit_Framework_TestCase {
 
         if ($image->gd_support_png) {
             $this->assertEquals($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.png"), true); //32 bit PNG image
-            $this->assertEquals($image->evaluateFXStack(), true);
+            $this->assertEquals($image->apply(), true);
         }
    
     }

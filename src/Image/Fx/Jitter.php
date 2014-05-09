@@ -41,11 +41,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Plugin/Base.php';
 
-require_once 'Image/Plugin/Interface.php';
+namespace Image\Fx;
 
-class Image_Fx_Jitter extends Image_Fx_Abstract implements Image_Plugin_Interface {
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
+
+class Jitter extends FxBase implements PluginInterface {
 
     public function __construct($jitter = 3, $wrap_around = true) {
         $this->jitter = $jitter;

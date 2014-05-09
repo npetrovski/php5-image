@@ -41,22 +41,37 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Plugin/Base.php';
+namespace Image\Draw;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Draw\DrawBase;
+use Image\Plugin\PluginInterface;
 
-class Image_Draw_Captcha extends Image_Draw_Abstract implements Image_Plugin_Interface {
+class Captcha extends DrawBase implements PluginInterface {
 
     private $arr_ttf_font = array();
     
     private $text_color = "000000";
+    
+    private $text = "";
+    
+    private $text_size = 15;
+    
+    private $text_size_random = 0;
+    
+    private $text_angle_random = 0;
+    
+    private $text_spacing = 5;
 
-    public function __construct($password = "") {
-        $this->password = $password;
-        $this->text_size = 15;
-        $this->text_size_random = 0;
-        $this->text_angle_random = 0;
-        $this->text_spacing = 5;
+    public function __construct($text = "", 
+                                $text_size = 15, 
+                                $text_size_random = 0, 
+                                $text_angle_random = 0, 
+                                $text_spacing = 5) {
+        $this->text = $text;
+        $this->text_size = $text_size;
+        $this->text_size_random = $text_size_random;
+        $this->text_angle_random = $text_angle_random;
+        $this->text_spacing = $text_spacing;
     }
 
     public function addTTFFont($font = "") {
@@ -103,11 +118,12 @@ class Image_Draw_Captcha extends Image_Draw_Abstract implements Image_Plugin_Int
         //$white = imagecolorallocate($this->_owner->image, 0, 0, 0);
         $l = array();
         $total_width = 0;
-        for ($x = 0; $x < strlen($this->password); $x++) {
-            $l[$x]['text'] = $this->password[$x];
+        for ($x = 0; $x < strlen($this->text); $x++) {
+            $l[$x]['text'] = $this->text[$x];
             $l[$x]['font'] = $this->arr_ttf_font[rand(0, count($this->arr_ttf_font) - 1)];
             $l[$x]['size'] = rand($this->text_size, $this->text_size + $this->text_size_random);
             $l[$x]['angle'] = ($this->text_angle_random / 2) - rand(0, $this->text_angle_random);
+            
             $captcha_dimensions = imagettfbbox($l[$x]['size'], $l[$x]['angle'], $l[$x]['font'], $l[$x]['text']);
             $l[$x]['width'] = abs($captcha_dimensions[2]) + $this->text_spacing;
             $l[$x]['height'] = abs($captcha_dimensions[5]);

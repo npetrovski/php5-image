@@ -41,13 +41,14 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
 
-require_once 'Image/Plugin/Base.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Base;
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
 
-class Image_Fx_Corners extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Corners extends FxBase implements PluginInterface {
 
     public function __construct($radius_x = 0, $radius_y = 0) {
         $this->radius_x = $radius_x;
@@ -66,7 +67,7 @@ class Image_Fx_Corners extends Image_Fx_Abstract implements Image_Plugin_Interfa
         $image_x = $this->_owner->imagesx();
         $image_y = $this->_owner->imagesy();
         $gdCorner = imagecreatefromstring(base64_decode($this->_cornerpng()));
-        $corner = new Image_Image();
+        $corner = new Base();
         $corner->createImageTrueColorTransparent($this->radius_x, $this->radius_y);
         imagecopyresampled($corner->image, $gdCorner, 0, 0, 0, 0, $this->radius_x, $this->radius_y, imagesx($gdCorner), imagesy($gdCorner));
         $corner_x = $this->radius_x - 1;

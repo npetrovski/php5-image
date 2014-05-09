@@ -41,13 +41,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Base.php';
+use Image\Base;
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
 
-require_once 'Image/Plugin/Interface.php';
-
-class Image_Fx_Crop extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Crop extends FxBase implements PluginInterface {
 
     public function __construct($crop_x = 0, $crop_y = 0) {
         $this->crop_x = $crop_x;
@@ -87,7 +87,7 @@ class Image_Fx_Crop extends Image_Fx_Abstract implements Image_Plugin_Interface 
     public function generate() {
         $this->calculate();
 
-        $crop = new Image_Image();
+        $crop = new Base();
         $crop->createImageTrueColorTransparent($this->canvas_x, $this->canvas_y);
 
         $src_x = $this->_owner->getHandleX() - floor($this->canvas_x / 2);

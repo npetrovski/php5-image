@@ -41,15 +41,14 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
+namespace Image\Draw;
 
-require_once 'Image/Plugin/Base.php';
+use Image\Draw\DrawBase;
+use Image\Plugin\PluginInterface;
+use Image\Helper\Color;
 
-require_once 'Image/Plugin/Interface.php';
 
-
-
-class Image_Draw_QRCode extends Image_Draw_Abstract implements Image_Plugin_Interface {
+class Qrcode extends DrawBase implements PluginInterface {
     /**
      * Encoding mode
      */
@@ -310,7 +309,7 @@ class Image_Draw_QRCode extends Image_Draw_Abstract implements Image_Plugin_Inte
 
         $col[0] = imagecolorallocate($base_image, 255, 255, 255);
 
-        $arrColor = Image_Image::hexColorToArrayColor($this->color);
+        $arrColor = Color::hexColorToArrayColor($this->color);
         $col[1] = imagecolorallocate($base_image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
 
         imagefill($base_image, 0, 0, $col[0]);

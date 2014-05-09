@@ -41,13 +41,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Base.php';
+use Image\Base;
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
 
-require_once 'Image/Plugin/Interface.php';
-
-class Image_Fx_Resize extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Resize extends FxBase implements PluginInterface {
 
     public function __construct($resize_x = 0, $resize_y = 0) {
         $this->resize_x = $resize_x;
@@ -90,7 +90,7 @@ class Image_Fx_Resize extends Image_Fx_Abstract implements Image_Plugin_Interfac
         $this->calculate();
         $dst_x = $this->canvas_x;
         $dst_y = $this->canvas_y;
-        $dst = new Image_Image();
+        $dst = new Base();
         $dst->createImageTrueColorTransparent($dst_x, $dst_y);
         imagecopyresampled($dst->image, $this->_owner->image, 0, 0, 0, 0, $dst_x, $dst_y, $src_x, $src_y);
         $this->_owner->image = $dst->image;

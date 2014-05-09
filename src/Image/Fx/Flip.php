@@ -41,13 +41,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Base.php';
+use Image\Base;
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
 
-require_once 'Image/Plugin/Interface.php';
-
-class Image_Fx_Flip extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Flip extends FxBase implements PluginInterface {
 
     public function __construct($flip_x = true, $flip_y = false) {
         $this->flip_x = $flip_x;
@@ -65,7 +65,7 @@ class Image_Fx_Flip extends Image_Fx_Abstract implements Image_Plugin_Interface 
         $src_y = $this->_owner->imagesy();
         $flip_x = $this->flip_x;
         $flip_y = $this->flip_y;
-        $flip = new Image_Image($src_x, $src_y);
+        $flip = new Base($src_x, $src_y);
         if ($flip_x == true) {
             imagecopy($flip->image, $this->_owner->image, 0, 0, 0, 0, $src_x, $src_y);
             for ($x = 0; $x < $src_x; $x++) {

@@ -1,7 +1,6 @@
 <?php
-
 /**
- * image-reader-default
+ * image-helper-abstract
  *
  * Copyright (c) 2009-2011, Nikolay Petrovski <to.petrovski@gmail.com>.
  * All rights reserved.
@@ -41,23 +40,24 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-class Image_Reader_Default {
 
-    public function read($filename) {
+namespace Image\Helper;
 
-        $image_data = getimagesize($filename);
-        if ($image_data) {
-            $class_name = 'Image_Reader_Adapter_' . ucfirst(strtolower(image_type_to_extension($image_data[2], false)));
+use Image\Plugin\PluginAbstract;
 
-            if (class_exists($class_name)) {
+abstract class HelperBase extends PluginAbstract
+{
+    public $type_id = "helper";
+    
+    public static function factory($name, $args) {
+        $className = __NAMESPACE__ . '\\' . ucfirst(strtolower($name));
 
-                $adapter = new $class_name();
-                return $adapter->getImage($filename);
-            }
-        } else {
-            //getimagesize failed
-            return false;
+        if (class_exists($className)) {
+            $obj = new \ReflectionClass($className);
+            return $obj->newInstanceArgs($args);
         }
+        
+        return false;
     }
-
 }
+

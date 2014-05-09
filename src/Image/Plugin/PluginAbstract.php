@@ -1,7 +1,7 @@
 <?php
 
 /**
- * image-plugin-interface
+ * image-plugin-base
  *
  * Copyright (c) 2009-2011, Nikolay Petrovski <to.petrovski@gmail.com>.
  * All rights reserved.
@@ -41,11 +41,19 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-interface Image_Plugin_Interface {
 
-    public function attachToOwner($owner);
+namespace Image\Plugin;
 
-    public function getTypeId();
+abstract class PluginAbstract {
 
-    public function generate();
+    protected $_owner;
+
+    public function attachToOwner($owner) {
+        $this->_owner = $owner;
+    }
+
+    public function getTypeId() {
+        return $this->type_id;
+    }
+
 }

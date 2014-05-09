@@ -41,13 +41,14 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
+namespace Image\Draw;
 
-require_once 'Image/Plugin/Base.php';
+use Image\Base;
+use Image\Draw\DrawBase;
+use Image\Plugin\PluginInterface;
+use Image\Helper\Color;
 
-require_once 'Image/Plugin/Interface.php';
-
-class Image_Draw_Border extends Image_Draw_Abstract implements Image_Plugin_Interface {
+class Border extends DrawBase implements PluginInterface {
 
     public function __construct($padding = 10, $color = "000000") {
         $this->padding = $padding;
@@ -74,8 +75,9 @@ class Image_Draw_Border extends Image_Draw_Abstract implements Image_Plugin_Inte
         $width = $this->_owner->imagesx();
         $height = $this->_owner->imagesy();
         $padding = $this->padding;
-        $arrColor = Image_Image::hexColorToArrayColor($this->color);
-        $temp = new Image_Image();
+        $arrColor = Color::hexColorToArrayColor($this->color);
+        
+        $temp = new Base();
         $temp->createImageTrueColor($width + ($padding * 2), $height + ($padding * 2));
         $tempcolor = imagecolorallocate($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
         imagefill($temp->image, 0, 0, $tempcolor);

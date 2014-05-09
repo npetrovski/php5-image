@@ -41,7 +41,12 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-class Image_Reader_Adapter_Jpeg extends Image_Reader_Abstract {
+
+namespace Image\Reader\Adapter;
+
+use Image\Reader\ReaderAbstract;
+
+class Jpeg extends ReaderAbstract {
 
     /**
      * Return an image resource from file or URL

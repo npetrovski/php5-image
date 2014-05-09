@@ -1,6 +1,7 @@
 <?php
+
 /**
- * image-reader-abstract
+ * image-plugin-interface
  *
  * Copyright (c) 2009-2011, Nikolay Petrovski <to.petrovski@gmail.com>.
  * All rights reserved.
@@ -40,35 +41,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
+namespace Image\Plugin;
 
+interface PluginInterface {
 
-abstract class Image_Reader_Abstract extends Image_Plugin_Base
-{
-    public $type_id = "reader_adapter";
-    
-    protected $_supportGD;
-    
-    abstract public function getImage($filename);
+    public function attachToOwner($owner);
 
-    protected function _detectGD($key = '') {
-        
-        if (is_null($this->_supportGD)) {
-            $gd_info = gd_info();
+    public function getTypeId();
 
-            preg_match('/\d+/', $gd_info['GD Version'], $match);
-            $this->_supportGD['Version'] = $match[0];
-            $this->_supportGD['GIF'] = $gd_info['GIF Create Support'];
-            $this->_supportGD['PNG'] = $gd_info['PNG Support'];
-            $this->_supportGD['JPEG'] = (key_exists('JPG Support', $gd_info)) 
-                        ? $gd_info['JPG Support'] 
-                        : $gd_info['JPEG Support'];
-
-            $this->_supportGD['TTF'] = $gd_info['FreeType Support'];
-        }
-        
-        if (isset($this->_supportGD[$key])) {
-            return $this->_supportGD[$key];
-        }
-    }
+    public function generate();
 }
-

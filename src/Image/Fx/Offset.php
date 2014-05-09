@@ -41,13 +41,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Base.php';
+use Image\Base;
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
 
-require_once 'Image/Plugin/Interface.php';
-
-class Image_Fx_Offset extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Offset extends FxBase implements PluginInterface {
 
     public function __construct($offset_x = 0, $offset_y = 0) {
         $this->offset_x = $offset_x;
@@ -63,7 +63,7 @@ class Image_Fx_Offset extends Image_Fx_Abstract implements Image_Plugin_Interfac
     public function generate() {
         $width = $this->_owner->imagesx();
         $height = $this->_owner->imagesy();
-        $temp = new Image_Image();
+        $temp = new Base();
         $temp->createImageTrueColor($width, $height);
         imagecopy($temp->image, $this->_owner->image, $this->offset_x, $this->offset_y, 0, 0, $width -
                 $this->offset_x, $height - $this->offset_y);

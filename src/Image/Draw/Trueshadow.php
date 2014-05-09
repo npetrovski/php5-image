@@ -41,13 +41,14 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
+namespace Image\Draw;
 
-require_once 'Image/Plugin/Base.php';
+use Image\Base;
+use Image\Draw\DrawBase;
+use Image\Plugin\PluginInterface;
+use Image\Helper\Color;
 
-require_once 'Image/Plugin/Interface.php';
-
-class Image_Draw_Trueshadow extends Image_Draw_Abstract implements Image_Plugin_Interface {
+class Trueshadow extends DrawBase implements PluginInterface {
 
     public function __construct($distance = 10, $color = "888888", $matrix = array(1, 2, 4, 4, 8, 8, 12, 12, 16, 16, 24, 32, 32, 24, 16, 16, 12, 12, 8, 8, 4, 4, 2, 1)) {
         $this->distance = $distance;
@@ -68,7 +69,7 @@ class Image_Draw_Trueshadow extends Image_Draw_Abstract implements Image_Plugin_
         $matrix_sum = array_sum($matrix);
         $c = 0;
         $m_offset = floor($matrix_width / 2);
-        $temp = new Image_Image();
+        $temp = new Base();
         $temp->createImageTrueColorTransparent($width + ($matrix_width * 2), $height + ($matrix_width * 2));
         imagecopy($temp->image, $this->_owner->image, $matrix_width, $matrix_width, 0, 0, $width, $height);
         $w = $temp->imagesx();
@@ -76,7 +77,7 @@ class Image_Draw_Trueshadow extends Image_Draw_Abstract implements Image_Plugin_
         for ($y = 0; $y < $h; $y++) {
             for ($x = 0; $x < $w; $x++) {
                 $t = $temp->imagecolorat($x, $y);
-                $t1 = Image_Image::intColorToArrayColor($t);
+                $t1 = Color::intColorToArrayColor($t);
                 $p[$x][$y]['r'] = $t1['red'];
                 $p[$x][$y]['g'] = $t1['green'];
                 $p[$x][$y]['b'] = $t1['blue'];
@@ -91,8 +92,9 @@ class Image_Draw_Trueshadow extends Image_Draw_Abstract implements Image_Plugin_
         $h = $this->_owner->imagesy();
         $d_offset = $distance - $matrix_width;
         if ($this->color != "image") {
-            $arrColor = $this->_owner->hexColorToArrayColor($this->color);
+            $arrColor = Color::hexColorToArrayColor($this->color);
         }
+        
         $temp->createImageTrueColorTransparent($width + $distance + $m_offset, $height + $distance + $m_offset);
         imagesavealpha($temp->image, true);
         imagealphablending($temp->image, true);

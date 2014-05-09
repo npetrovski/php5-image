@@ -41,13 +41,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
+namespace Image\Draw;
 
-require_once 'Image/Plugin/Base.php';
+use Image\Helper\Color;
+use Image\Draw\DrawBase;
+use Image\Plugin\PluginInterface;
 
-require_once 'Image/Plugin/Interface.php';
-
-class Image_Draw_Scanline extends Image_Draw_Abstract implements Image_Plugin_Interface {
+class Scanline extends DrawBase implements PluginInterface {
 
     public function __construct($width = 4, $color = "FFFFFF", $light_alpha = 100, $dark_alpha = 80) {
         $this->width = $width;
@@ -60,7 +60,8 @@ class Image_Draw_Scanline extends Image_Draw_Abstract implements Image_Plugin_In
         $alt = 0;
         imagesavealpha($this->_owner->image, true);
         imagealphablending($this->_owner->image, true);
-        $arrColor = Image_Image::hexColorToArrayColor($this->color);
+        
+        $arrColor = Color::hexColorToArrayColor($this->color);
         $l = imagecolorallocatealpha($this->_owner->image, $arrColor['red'], $arrColor['green'], $arrColor['blue'], $this->light_alpha);
         $d = imagecolorallocatealpha($this->_owner->image, $arrColor['red'], $arrColor['green'], $arrColor['blue'], $this->dark_alpha);
         for ($x = 0; $x < $this->_owner->imagesy(); $x += $this->width) {

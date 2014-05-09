@@ -41,11 +41,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Plugin/Base.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Helper\Color;
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
 
-class Image_Fx_Sobel extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Sobel extends FxBase implements PluginInterface {
 
     public function generate() {
         
@@ -75,7 +77,7 @@ class Image_Fx_Sobel extends Image_Fx_Abstract implements Image_Plugin_Interface
         for ($y = 0; $y < $height; $y++) {
             for ($x = 0; $x < $width; $x++) {
                 $rgb = $this->_owner->imagecolorat($x, $y);
-                $arrRgb = Image_Image::intColorToArrayColor($rgb);
+                $arrRgb = Color::intColorToArrayColor($rgb);
                 $p[$x][$y]['r'] = $arrRgb['red'];
                 $p[$x][$y]['g'] = $arrRgb['green'];
                 $p[$x][$y]['b'] = $arrRgb['blue'];

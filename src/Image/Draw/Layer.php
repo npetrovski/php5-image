@@ -41,16 +41,19 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Plugin/Base.php';
+namespace Image\Draw;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Base;
+use Image\Draw\DrawBase;
+use Image\Plugin\PluginInterface;
 
-class Image_Draw_Layer extends Image_Draw_Abstract implements Image_Plugin_Interface {
+
+class Layer extends DrawBase implements PluginInterface {
 
     protected $position = "br";
     protected $preserveLayerSize = true;
     
-    public function __construct(Image_Image $img = null, $preserveLayerSize = true, $position = "br") {
+    public function __construct(Base $img = null, $preserveLayerSize = true, $position = "br") {
         $this->img = $img;
         $this->preserveLayerSize = $preserveLayerSize;
         $this->position = $position;

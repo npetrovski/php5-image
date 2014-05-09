@@ -42,10 +42,14 @@
  * @since     File available since Release 1.0.0
  */
 
+namespace Image\Reader\Adapter;
+
+use Image\Reader\ReaderAbstract;
+
 /**
  * Open ICO files and extract any size/depth to PNG format
  */
-class Image_Reader_Adapter_Ico extends Image_Reader_Abstract {
+class Ico extends ReaderAbstract {
 
     /**
      * Background color on icon extraction

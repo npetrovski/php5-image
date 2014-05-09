@@ -41,11 +41,12 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Plugin/Base.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
 
-class Image_Fx_Ripple extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Ripple extends FxBase implements PluginInterface {
 
     public function __construct($frequency = 3, $amplitude = 4, $wrap_around = true) {
         $this->frequency = $frequency;

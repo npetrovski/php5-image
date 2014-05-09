@@ -41,13 +41,14 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
+namespace Image\Draw;
 
-require_once 'Image/Plugin/Base.php';
+use Image\Base;
+use Image\Draw\DrawBase;
+use Image\Plugin\PluginInterface;
+use Image\Helper\Color;
 
-require_once 'Image/Plugin/Interface.php';
-
-class Image_Draw_Infobar extends Image_Draw_Abstract implements Image_Plugin_Interface {
+class Infobar extends DrawBase implements PluginInterface {
 
     public function __construct($info = "[Filename]", $position = "b", $justify = "c", $barcolor = "000000", $textcolor = "FFFFFF") {
         $this->info = $info;
@@ -61,7 +62,7 @@ class Image_Draw_Infobar extends Image_Draw_Abstract implements Image_Plugin_Int
     public function generate() {
         $src_x = $this->_owner->imagesx();
         $src_y = $this->_owner->imagesy();
-        $temp = new Image_Image();
+        $temp = new Base();
         $temp->createImageTrueColorTransparent($src_x, $src_y + 20);
         $text = str_replace("[Filename]", $this->_owner->getSettings('filename'), $this->info);
         switch ($this->position) {
@@ -95,13 +96,14 @@ class Image_Draw_Infobar extends Image_Draw_Abstract implements Image_Plugin_Int
                 break;
         }
         //Draw the bar background
-        $arrColor = $this->_owner->hexColorToArrayColor($this->barcolor);
+        $arrColor = Color::hexColorToArrayColor($this->barcolor);
         $bar_color = imagecolorallocate($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
         imagefilledrectangle($temp->image, 0, $bar_y, $src_x, 20, $bar_color);
         //Copy the image
         imagecopy($temp->image, $this->_owner->image, $x, $y, 0, 0, $src_x, $src_y);
+        
         //Draw the text (to be replaced with image_draw_text one day
-        $arrColor = $this->_owner->hexColorToArrayColor($this->textcolor);
+        $arrColor = Color::hexColorToArrayColor($this->textcolor);
         $text_color = imagecolorallocate($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
         imagestring($temp->image, $this->font, $text_x, $text_y, $text, $text_color);
         $this->_owner->image = $temp->image;

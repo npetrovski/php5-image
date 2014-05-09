@@ -41,13 +41,15 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
 
-require_once 'Image/Plugin/Base.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Base;
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
+use Image\Helper\Color;
 
-class Image_Fx_Gaussian extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Gaussian extends FxBase implements PluginInterface {
 
     public function __construct($matrix = array(1, 4, 8, 16, 8, 4, 1)) {
         $this->matrix = $matrix;
@@ -66,10 +68,11 @@ class Image_Fx_Gaussian extends Image_Fx_Abstract implements Image_Plugin_Interf
         $matrix_sum = array_sum($matrix);
         $c = 0;
         $m_offset = floor($matrix_width / 2);
+
         for ($y = 0; $y < $height; $y++) {
             for ($x = 0; $x < $width; $x++) {
                 $t = $this->_owner->imagecolorat($x, $y);
-                $t1 = Image_Image::intColorToArrayColor($t);
+                $t1 = Color::intColorToArrayColor($t);
                 $p[$x][$y]['r'] = $t1['red'];
                 $p[$x][$y]['g'] = $t1['green'];
                 $p[$x][$y]['b'] = $t1['blue'];
@@ -80,10 +83,11 @@ class Image_Fx_Gaussian extends Image_Fx_Abstract implements Image_Plugin_Interf
                 $p1[$x][$y]['a'] = 127;
             }
         }
-        $temp = new Image_Image();
+        $temp = new Base();
         $temp->createImageTrueColorTransparent($width, $height);
         imagesavealpha($temp->image, true);
         imagealphablending($temp->image, true);
+
         for ($i = $m_offset; $i < $width - $m_offset; $i++) {
             for ($j = $m_offset; $j < $height - $m_offset; $j++) {
                 $sumr = 0;
@@ -103,6 +107,7 @@ class Image_Fx_Gaussian extends Image_Fx_Abstract implements Image_Plugin_Interf
                 $p1[$i][$j]['a'] = $suma / $matrix_sum;
             }
         }
+
         for ($i = $m_offset; $i < $width - $m_offset; $i++) {
             for ($j = $m_offset; $j < $height - $m_offset; $j++) {
                 $sumr = 0;
@@ -122,7 +127,7 @@ class Image_Fx_Gaussian extends Image_Fx_Abstract implements Image_Plugin_Interf
                 imagesetpixel($temp->image, $i, $j, $col);
             }
         }
-        
+
         $this->_owner->image = $temp->image;
         unset($temp);
         return true;

@@ -41,13 +41,14 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Image.php';
 
-require_once 'Image/Plugin/Base.php';
+namespace Image\Fx;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Helper\Color;
+use Image\Fx\FxBase;
+use Image\Plugin\PluginInterface;
 
-class Image_Fx_Colorize extends Image_Fx_Abstract implements Image_Plugin_Interface {
+class Colorize extends FxBase implements PluginInterface {
 
     public function __construct($find = '000000', $replace = '000000') {
         $this->setColorize($find, $replace);
@@ -61,8 +62,8 @@ class Image_Fx_Colorize extends Image_Fx_Abstract implements Image_Plugin_Interf
 
     public function generate() {
 
-        $findColor = Image_Image::hexColorToArrayColor($this->find);
-        $replaceColor = Image_Image::hexColorToArrayColor($this->replace);
+        $findColor = Color::hexColorToArrayColor($this->find);
+        $replaceColor = Color::hexColorToArrayColor($this->replace);
 
         $index = imagecolorclosest($this->_owner->image, $findColor['red'], $findColor['green'], $findColor['blue']); //find
 

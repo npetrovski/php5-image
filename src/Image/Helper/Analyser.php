@@ -41,11 +41,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Plugin/Base.php';
+namespace Image\Helper;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Helper\Color;
+use Image\Helper\HelperBase;
+use Image\Plugin\PluginInterface;
 
-class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugin_Interface {
+class Analyser extends HelperBase implements PluginInterface {
 
     private $__count_colours = array();
     private $__count_a = array();
@@ -76,7 +78,7 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
             return false;
         }
         if (!$this->__analyse_complete) {
-            $this->_analyse();
+            $this->analyse();
         }
         return count($this->__count_colours);
     }
@@ -85,26 +87,26 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
         if (!isset($this->_owner->image)) {
             return false;
         }
-        $this->_analyse();
+        $this->analyse();
         switch ($channel) {
             case "r":
             case "red":
-                return $this->_array_avg($this->__count_r);
+                return $this->arrayAvg($this->__count_r);
                 break;
             case "g":
             case "green":
-                return $this->_array_avg($this->__count_g);
+                return $this->arrayAvg($this->__count_g);
                 break;
             case "b":
             case "blue":
-                return $this->_array_avg($this->__count_b);
+                return $this->arrayAvg($this->__count_b);
                 break;
             case "a":
             case "alpha":
-                return $this->_array_avg($this->__count_a);
+                return $this->arrayAvg($this->__count_a);
                 break;
             default:
-                return $this->_array_avg($this->__count_colours);
+                return $this->arrayAvg($this->__count_colours);
                 break;
         }
     }
@@ -114,27 +116,27 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
             return false;
         }
         if (!$this->__analyse_complete) {
-            $this->_analyse();
+            $this->analyse();
         }
         switch ($channel) {
             case "r":
             case "red":
-                return $this->_array_min($this->__count_r);
+                return $this->arrayMin($this->__count_r);
                 break;
             case "g":
             case "green":
-                return $this->_array_min($this->__count_g);
+                return $this->arrayMin($this->__count_g);
                 break;
             case "b":
             case "blue":
-                return $this->_array_min($this->__count_b);
+                return $this->arrayMin($this->__count_b);
                 break;
             case "a":
             case "alpha":
-                return $this->_array_min($this->__count_a);
+                return $this->arrayMin($this->__count_a);
                 break;
             default:
-                return $this->_array_min($this->__count_colours);
+                return $this->arrayMin($this->__count_colours);
                 break;
         }
     }
@@ -144,27 +146,27 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
             return false;
         }
         if (!$this->__analyse_complete) {
-            $this->_analyse();
+            $this->analyse();
         }
         switch ($channel) {
             case "r":
             case "red":
-                return $this->_array_max($this->__count_r);
+                return $this->arrayMax($this->__count_r);
                 break;
             case "g":
             case "green":
-                return $this->_array_max($this->__count_g);
+                return $this->arrayMax($this->__count_g);
                 break;
             case "b":
             case "blue":
-                return $this->_array_max($this->__count_b);
+                return $this->arrayMax($this->__count_b);
                 break;
             case "a":
             case "alpha":
-                return $this->_array_max($this->__count_a);
+                return $this->arrayMax($this->__count_a);
                 break;
             default:
-                return $this->_array_max($this->__count_colours);
+                return $this->arrayMax($this->__count_colours);
                 break;
         }
     }
@@ -174,8 +176,8 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
             return false;
         }
         $color = $this->_owner->imageColorAt($x, $y);
-        $arrColor = $this->_owner->intColorToArrayColor($color);
-        list ($h, $s, $b) = $this->_hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
+        $arrColor = Color::intColorToArrayColor($color);
+        list ($h, $s, $b) = $this->Hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
         return $h;
     }
 
@@ -184,8 +186,8 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
             return false;
         }
         $color = $this->_owner->imageColorAt($x, $y);
-        $arrColor = $this->_owner->intColorToArrayColor($color);
-        list ($h, $s, $b) = $this->_hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
+        $arrColor = Color::intColorToArrayColor($color);
+        list ($h, $s, $b) = $this->Hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
         return $s;
     }
 
@@ -194,42 +196,42 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
             return false;
         }
         $color = $this->_owner->imageColorAt($x, $y);
-        $arrColor = $this->_owner->intColorToArrayColor($color);
-        list ($h, $s, $b) = $this->_hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
+        $arrColor = Color::intColorToArrayColor($color);
+        list ($h, $s, $b) = $this->Hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
         return $b;
     }
 
     public function imageHue() {
         if (!$this->__analyse_complete) {
-            $this->_analyse();
+            $this->analyse();
         }
         if (!$this->__analyse_HSB_complete) {
-            $this->_analyseHSB();
+            $this->analyseHsb();
         }
-        return $this->_array_max($this->__count_hue);
+        return $this->arrayMax($this->__count_hue);
     }
 
     public function imageSaturation() {
         if (!$this->__analyse_complete) {
-            $this->_analyse();
+            $this->analyse();
         }
         if (!$this->__analyse_HSB_complete) {
-            $this->_analyseHSB();
+            $this->analyseHsb();
         }
-        return $this->_array_max($this->__count_saturation);
+        return $this->arrayMax($this->__count_saturation);
     }
 
     public function imageBrightness() {
         if (!$this->__analyse_complete) {
-            $this->_analyse();
+            $this->analyse();
         }
         if (!$this->__analyse_HSB_complete) {
-            $this->_analyseHSB();
+            $this->analyseHsb();
         }
-        return $this->_array_max($this->__count_brightness);
+        return $this->arrayMax($this->__count_brightness);
     }
 
-    private function _analyse() {
+    private function analyse() {
         if (!isset($this->_owner->image)) {
             return false;
         }
@@ -238,7 +240,7 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
         for ($y = 0; $y < $height; $y++) {
             for ($x = 0; $x < $width; $x++) {
                 $color = $this->_owner->imageColorAt($x, $y);
-                $arrColor = $this->_owner->intColorToArrayColor($color);
+                $arrColor = Color::intColorToArrayColor($color);
                 $this->__count_colours[$color]++;
                 $this->__count_a[$arrColor['alpha']]++;
                 $this->__count_r[$arrColor['red']]++;
@@ -249,10 +251,10 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
         $this->__analyse_complete = true;
     }
 
-    private function _analyseHSB() {
+    private function analyseHsb() {
         foreach ($this->__count_colours as $color => $count) {
-            $arrColor = $this->_owner->intColorToArrayColor($color);
-            list ($h, $s, $b) = $this->_hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
+            $arrColor = Color::intColorToArrayColor($color);
+            list ($h, $s, $b) = $this->Hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
             $this->__count_hue[$h]++;
             $this->__count_saturation[$s]++;
             $this->__count_brightness[$b]++;
@@ -260,7 +262,7 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
         $this->__analyse_HSB_complete = true;
     }
 
-    private function _array_avg($array) {
+    private function arrayAvg($array) {
         foreach ($array as $k => $v) {
             $t += $k * $v;
             $s += $v;
@@ -268,7 +270,7 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
         return round($t / $s);
     }
 
-    private function _array_min($array) {
+    private function arrayMin($array) {
         $mv = 256;
         foreach ($array as $k => $v) {
             if ($v < $mv) {
@@ -279,7 +281,7 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
         return $mk;
     }
 
-    private function _array_max($array) {
+    private function arrayMax($array) {
         $mv = 0;
         foreach ($array as $k => $v) {
             if ($v > $mv) {
@@ -290,7 +292,7 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
         return $mk;
     }
 
-    private function _hsb($r, $g, $b) {
+    private function Hsb($r, $g, $b) {
         $hue = 0.0;
         $saturation = 0.0;
         $brightness = 0.0;
@@ -329,6 +331,7 @@ class Image_Helper_Analyser extends Image_Helper_Abstract implements Image_Plugi
             $hue, $saturation, $brightness
         );
     }
+
 
 }
 

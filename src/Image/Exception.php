@@ -41,7 +41,8 @@
  * @since     File available since Release 1.0.0
  */
 
+namespace Image;
 
-class Image_Exception extends Exception
+class Exception extends Exception
 {}
 ?>

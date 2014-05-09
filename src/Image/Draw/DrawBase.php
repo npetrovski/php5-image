@@ -1,6 +1,6 @@
 <?php
 /**
- * image-helper-abstract
+ * image-draw-watermark
  *
  * Copyright (c) 2009-2011, Nikolay Petrovski <to.petrovski@gmail.com>.
  * All rights reserved.
@@ -41,9 +41,23 @@
  * @since     File available since Release 1.0.0
  */
 
+namespace Image\Draw;
 
-abstract class Image_Helper_Abstract extends Image_Plugin_Base
+use Image\Plugin\PluginAbstract;
+
+abstract class DrawBase extends PluginAbstract
 {
-    public $type_id = "helper";
+    public $type_id = "draw";
+    
+    public static function factory($name, $args) {
+        $className = __NAMESPACE__ . '\\' . ucfirst(strtolower($name));
+
+        if (class_exists($className)) {
+            $obj = new \ReflectionClass($className);
+            return $obj->newInstanceArgs($args);
+        }
+        
+        return false;
+    }
 }
 

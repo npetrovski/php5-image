@@ -41,17 +41,23 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-require_once 'Image/Plugin/Base.php';
+namespace Image\Draw;
 
-require_once 'Image/Plugin/Interface.php';
+use Image\Base;
+use Image\Draw\DrawBase;
+use Image\Plugin\PluginInterface;
 
-class Image_Draw_Watermark extends Image_Draw_Abstract implements Image_Plugin_Interface {
+class Watermark extends DrawBase implements PluginInterface {
 
     protected $position = "br";
     protected $watermark;
 
-    public function __construct(Image_Image $watermark = null, $position = "br") {
-        $this->watermark = $watermark;
+    public function __construct($watermark = null, $position = "br") {
+        if ($watermark instanceof Base)  {
+            $this->watermark = $watermark;
+        } else if (file_exists($watermark)) {
+            $this->watermark = new Base($watermark);
+        }
         $this->position = $position;
     }
 
@@ -71,6 +77,11 @@ class Image_Draw_Watermark extends Image_Draw_Abstract implements Image_Plugin_I
     }
 
     public function generate() {
+        
+        if (is_null($this->watermark)) {
+            return false;
+        }
+        
         imagesavealpha($this->_owner->image, true);
         imagealphablending($this->_owner->image, true);
         imagesavealpha($this->watermark->image, false);

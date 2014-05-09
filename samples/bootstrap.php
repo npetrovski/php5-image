@@ -7,8 +7,7 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
 )));
 
-function _autoload($class) {
-    require_once str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
-}
+require 'Image\Autoloader.php';
 
-spl_autoload_register('_autoload');
+Image\Autoloader::register();
+

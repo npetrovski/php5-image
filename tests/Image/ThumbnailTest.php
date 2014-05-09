@@ -29,7 +29,7 @@
             $this->assertEquals($image->$attachment_id->resize_x, 100);
             $this->assertEquals($image->$attachment_id->resize_y, 100);
             
-            $image->evaluateFXStack();
+            $image->apply();
 
             $this->assertEquals($image->imagesx(), 100);
             $this->assertEquals($image->imagesy(), 100);
@@ -52,7 +52,7 @@
             $this->assertEquals($image->$attachment_id->crop_x, 100);
             $this->assertEquals($image->$attachment_id->crop_y, 100);
             
-            $image->evaluateFXStack();
+            $image->apply();
 
             $this->assertEquals($image->imagesx(), 100);
             $this->assertEquals($image->imagesy(), 100);
@@ -135,7 +135,7 @@
                 $image->$resize_id->resize_x = 160;
                 $image->$crop_id->crop_x = 120;
                 
-                $image->evaluateFXStack();
+                $image->apply();
                 
                 $this->assertEquals($image->imagesx(), 120);
                 $this->assertEquals($image->imagesy(), 120);

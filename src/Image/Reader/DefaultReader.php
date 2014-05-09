@@ -1,7 +1,7 @@
 <?php
 
 /**
- * image-plugin-base
+ * image-reader-default
  *
  * Copyright (c) 2009-2011, Nikolay Petrovski <to.petrovski@gmail.com>.
  * All rights reserved.
@@ -41,16 +41,26 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
-abstract class Image_Plugin_Base {
 
-    protected $_owner;
+namespace Image\Reader;
 
-    public function attachToOwner($owner) {
-        $this->_owner = $owner;
-    }
+class DefaultReader {
 
-    public function getTypeId() {
-        return $this->type_id;
+    public function read($filename) {
+
+        $image_data = getimagesize($filename);
+        if ($image_data) {
+            $class_name = __NAMESPACE__ . '\\Adapter\\' . ucfirst(strtolower(image_type_to_extension($image_data[2], false)));
+
+            if (class_exists($class_name)) {
+
+                $adapter = new $class_name();
+                return $adapter->getImage($filename);
+            }
+        } else {
+            //getimagesize failed
+            return false;
+        }
     }
 
 }
