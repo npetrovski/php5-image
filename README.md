@@ -24,25 +24,21 @@ $image->imagePng();
 ### Captcha
 ```php
 $image = new Image\Canvas();
+$image->createImageTrueColor(206, 96, "FF0000");
 
-$image->createImageTrueColor(206, 96, "FFC5D0");
-
-//Primitives
+// Primitives
 $background = new Image\Draw\Primitive("FFFFFF", 20);
-$background->addLine(20, 20, 80, 80);
-$background->addRectangle(100, 20, 180, 80);
-$background->addFilledRectangle(150, 10, 170, 30);
-
-$background->addEllipse(10, 50, 20, 60);
-$background->addFilledEllipse(140, 60, 160, 80);
-
-$background->addCircle(200, 50, 30);
-
-$background->addSpiral(100, 50, 100, 10);
+$background->line(20, 20, 80, 80)
+           ->rectangle(100, 20, 180, 80)
+           ->filledRectangle(150, 10, 170, 30)
+           ->ellipse(10, 50, 20, 60)
+           ->filledEllipse(140, 60, 160, 80)
+           ->circle(200, 50, 30)
+           ->spiral(100, 50, 100, 10);
 
 $image->attach($background);
 
-//Captcha text
+// Captcha text
 $captcha = new Image\Draw\Captcha("captcha");
 
 $captcha->addTTFFont(dirname(__FILE__) . '/../fonts/blambotcustom.ttf');
@@ -57,9 +53,9 @@ $captcha->setTextSize(20)
 
 $image->attach($captcha);
 
-//Add a border
-$image->attach(new Image\Draw\Border(1, "BBBBBB"));
-$image->attach(new Image\Draw\Border(1, "FFFFFF"));
+// Add border
+$image->draw('border', 1, 'bbbbbb')
+      ->draw('border', 1, 'ffffff');
 
 $image->imagePng();
 ```
