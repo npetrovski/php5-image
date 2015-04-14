@@ -3,16 +3,11 @@
 require_once dirname(__FILE__) . '/bootstrap.php';
 
 $image = new Image\Canvas(dirname(__FILE__) . '/source/rose.jpg');
+$layer = new Image\Canvas(dirname(__FILE__) . '/source/cherry.png');
 
-$secondImage = new Image\Canvas(dirname(__FILE__) . '/source/cherry.png');
-
-$layer = new Image\Draw\Layer($secondImage, false);
-$layer->setPosition(0, 0);
-
-$image->attach(new Image\Fx\Corners(15, 15));
-$image->attach(new Image\Fx\Resize(198));
-$image->attach(new Image\Fx\Crop(196, 96));
-
-$image->attach($layer);
+$image->fx('corners', 15, 15)
+      ->fx('resize', 198)
+      ->fx('crop', 196, 96)
+      ->draw('layer', $layer, 0, 0, false);
 
 $image->imagePng();
