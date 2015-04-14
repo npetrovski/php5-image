@@ -1,8 +1,13 @@
 # PHP5 Image Manipulation Library 
 
-PHP5 Image is a full object-oriented library for an image manipulation by PHP and GD2. It is an extended version of [http://code.google.com/p/php-image/ php-image] project and can be used either standalone or inside [http://framework.zend.com/ Zend Framework] projects.
+PHP5 Image is a full **object-oriented library for an image manipulation by PHP and GD2**. It is an extended version of [http://code.google.com/p/php-image/ php-image] project and can be used either standalone or inside [http://framework.zend.com/ Zend Framework] projects.
 
 The project currently provides readers for PNG, JPEG, GIF, PSD, ICO image-file types, and outputs all GD2-supported types.
+
+## Requirements
+
+- PHP >=5.3
+- Fileinfo Extension
 
 ![php5-image](/php5-image.png "Title")
 
@@ -315,3 +320,14 @@ $image->draw('border', 2, "000000");
 
 $image->imagePng();
 ```
+
+## Contributing
+
+Contributions are welcome. Please note the following guidelines before submiting your pull request.
+
+- Follow [PSR-2](http://www.php-fig.org/psr/psr-2/) coding standards.
+- Write tests for new functions and added features
+
+## License
+
+This library is licensed under the [MIT License](http://opensource.org/licenses/MIT).
