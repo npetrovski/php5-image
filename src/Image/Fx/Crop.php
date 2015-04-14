@@ -43,7 +43,7 @@
  */
 namespace Image\Fx;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 
@@ -87,7 +87,7 @@ class Crop extends FxBase implements PluginInterface {
     public function generate() {
         $this->calculate();
 
-        $crop = new Base();
+        $crop = new Canvas();
         $crop->createImageTrueColorTransparent($this->canvas_x, $this->canvas_y);
 
         $src_x = $this->_owner->getHandleX() - floor($this->canvas_x / 2);

@@ -2,9 +2,9 @@
 
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-$image = new Image\Base();
+$image = new Image\Canvas();
 
-$image->createImageTrueColor(206, 96, "FF0000");
+$image->createImageTrueColor(206, 96, "FFC5D0");
 
 //Primitives
 $background = new Image\Draw\Primitive("FFFFFF", 20);

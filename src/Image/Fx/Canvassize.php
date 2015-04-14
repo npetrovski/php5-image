@@ -44,7 +44,7 @@
 
 namespace Image\Fx;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
@@ -63,7 +63,7 @@ class Canvassize extends FxBase implements PluginInterface {
         $width = $this->_owner->imagesx();
         $height = $this->_owner->imagesy();
 
-        $temp = new Base();
+        $temp = new Canvas();
         if (!empty($this->color)) {
             $temp->createImageTrueColor($width + ($this->r + $this->l), $height +
                     ($this->t + $this->b));

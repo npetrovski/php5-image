@@ -43,7 +43,7 @@
  */
 namespace Image\Draw;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
@@ -77,7 +77,7 @@ class Border extends DrawBase implements PluginInterface {
         $padding = $this->padding;
         $arrColor = Color::hexColorToArrayColor($this->color);
         
-        $temp = new Base();
+        $temp = new Canvas();
         $temp->createImageTrueColor($width + ($padding * 2), $height + ($padding * 2));
         $tempcolor = imagecolorallocate($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
         imagefill($temp->image, 0, 0, $tempcolor);

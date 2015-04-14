@@ -43,13 +43,13 @@
  */
 namespace Image\Fx;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 
 class Vignette extends FxBase implements PluginInterface {
 
-    public function __construct(Base $vignette = NULL) {
+    public function __construct(Canvas $vignette = NULL) {
         $this->vignette = $vignette;
     }
 

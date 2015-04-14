@@ -2,12 +2,12 @@
 
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-$image = new Image\Base(dirname(__FILE__) . '/source/stamens.jpg');
+$image = new Image\Canvas(dirname(__FILE__) . '/source/stamens.jpg');
 
 $image->attach(new Image\Fx\Resize(196));
 $image->attach(new Image\Fx\Crop(0, 96));
 
-$watermark = new Image\Draw\Watermark(new Image\Base(dirname(__FILE__) . '/source/watermark.png'));
+$watermark = new Image\Draw\Watermark(new Image\Canvas(dirname(__FILE__) . '/source/watermark.png'));
 $watermark->setPosition("tile");
 
 $image->attach($watermark);

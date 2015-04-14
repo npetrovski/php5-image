@@ -52,7 +52,7 @@ use Image\Draw\DrawBase;
 use Image\Helper\HelperBase;
 use Image\Exception as ImageException;
 
-class Base {
+class Canvas {
 
     /**
      * Image resource
@@ -91,11 +91,11 @@ class Base {
 
         switch (count($args)) {
             case 1:
-                if (!empty($args[0]))
+                if (!empty($args[0]) && is_string($args[0]))
                     $this->openImage($args[0]);
                 break;
             case 2:
-                $this->createImageTrueColor($args[0], $args[1]);
+                $this->createImageTrueColor(intval($args[0]), intval($args[1]));
                 break;
         }
     }
@@ -115,15 +115,15 @@ class Base {
     /**
      * Attach image plugin
      * 
-     * @param \Image\Plugin\PluginInterface $child
+     * @param \Image\Plugin\PluginInterface $plugin
      * @return string
      */
-    public function attach(PluginInterface $obj) {
+    public function attach(PluginInterface $plugin) {
         
-        $id = spl_object_hash($obj);
-        $obj->attachToOwner($this);
+        $id = spl_object_hash($plugin);
+        $plugin->attachToOwner($this);
         
-        $this->_plugins[$id] = array('plugin' => $obj, 'applied' => false);
+        $this->_plugins[$id] = array('plugin' => $plugin, 'applied' => false);
 
         return $id;
     }
@@ -131,7 +131,7 @@ class Base {
     /**
      * Attach image effect
      * 
-     * @return \Image\Base
+     * @return \Image\Canvas
      * @throws ImageException
      */
     public function fx() {
@@ -148,7 +148,7 @@ class Base {
     /**
      * Attach image drawing
      * 
-     * @return \Image\Base
+     * @return \Image\Canvas
      * @throws ImageException
      */
     public function draw() {
@@ -165,7 +165,7 @@ class Base {
     /**
      * Attach image helper
      * 
-     * @return \Image\Base
+     * @return \Image\Canvas
      * @throws ImageException
      */
     public function helper() {
@@ -182,7 +182,7 @@ class Base {
     /**
      * Apply plugin changes
      * 
-     * @return \Image\Base
+     * @return \Image\Canvas
      */
     public function apply() {
 
@@ -203,7 +203,7 @@ class Base {
      * @param int $width
      * @param int $height
      * @param string $color
-     * @return \Image\Base
+     * @return \Image\Canvas
      */
     public function createImage($width = 100, $height = 100, $color = "FFFFFF") {
         $this->image = imagecreate($width, $height);
@@ -220,7 +220,7 @@ class Base {
      * @param int $width
      * @param int $height
      * @param string $color
-     * @return \Image\Base
+     * @return \Image\Canvas
      */
     public function createImageTrueColor($width = 100, $height = 100, $color = "FFFFFF") {
         $this->image = imagecreatetruecolor($width, $height);
@@ -236,7 +236,7 @@ class Base {
      * 
      * @param int $x
      * @param int $y
-     * @return \Image\Base
+     * @return \Image\Canvas
      */
     public function createImageTrueColorTransparent($x = 100, $y = 100) {
         $this->image = imagecreatetruecolor($x, $y);
@@ -253,7 +253,7 @@ class Base {
      * Open image from file
      * 
      * @param string $filename
-     * @return \Image\Base
+     * @return \Image\Canvas
      * @throws ImageException
      */
     public function openImage($filename = "") {
@@ -341,7 +341,7 @@ class Base {
     /**
      * Destroy image
      * 
-     * @return \Image\Base
+     * @return \Image\Canvas
      */
     public function destroyImage() {
         imagedestroy($this->image);
@@ -401,7 +401,7 @@ class Base {
      * @param int $y
      * @param string $color
      * @param int $alpha
-     * @return \Image\Base
+     * @return \Image\Canvas
      */
     public function imagefill($x = 0, $y = 0, $color = "FFFFFF", $alpha = null) {
         imagefill($this->image, $x, $y, $this->imagecolorallocate($color, $alpha));
@@ -436,7 +436,7 @@ class Base {
      * Displace image
      * 
      * @param array $map
-     * @return \Image\Base
+     * @return \Image\Canvas
      */
     public function displace($map) {
         $width = $this->imagesx();

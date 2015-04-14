@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-$image = new Image\Base(dirname(__FILE__) . '/source/icecream.jpg');
+$image = new Image\Canvas(dirname(__FILE__) . '/source/icecream.jpg');
 
 $image->attach(new Image\Fx\Resize(196));
 $image->attach(new Image\Fx\Crop(166, 70));

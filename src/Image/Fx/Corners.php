@@ -44,7 +44,7 @@
 
 namespace Image\Fx;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 
@@ -67,7 +67,7 @@ class Corners extends FxBase implements PluginInterface {
         $image_x = $this->_owner->imagesx();
         $image_y = $this->_owner->imagesy();
         $gdCorner = imagecreatefromstring(base64_decode($this->_cornerpng()));
-        $corner = new Base();
+        $corner = new Canvas();
         $corner->createImageTrueColorTransparent($this->radius_x, $this->radius_y);
         imagecopyresampled($corner->image, $gdCorner, 0, 0, 0, 0, $this->radius_x, $this->radius_y, imagesx($gdCorner), imagesy($gdCorner));
         $corner_x = $this->radius_x - 1;

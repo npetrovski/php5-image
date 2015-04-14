@@ -58,6 +58,7 @@ abstract class ReaderAbstract extends PluginAbstract {
         if (is_null($this->_supportGD)) {
             $gd_info = gd_info();
 
+            $match = array();
             preg_match('/\d+/', $gd_info['GD Version'], $match);
             $this->_supportGD['Version'] = $match[0];
             $this->_supportGD['GIF'] = $gd_info['GIF Create Support'];

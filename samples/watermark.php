@@ -2,12 +2,12 @@
 
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-$image = new Image\Base(dirname(__FILE__) . '/source/boat.jpg');
+$image = new Image\Canvas(dirname(__FILE__) . '/source/boat.jpg');
 
 $image->attach(new Image\Fx\Resize(198));
 $image->attach(new Image\Fx\Crop(196, 96));
 
-$wm_image = new Image\Base(dirname(__FILE__) . '/source/phpimage.png');
+$wm_image = new Image\Canvas(dirname(__FILE__) . '/source/phpimage.png');
 $wm_image->mid_handle = false;
 
 $watermark = new Image\Draw\Watermark($wm_image);

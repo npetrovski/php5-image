@@ -2,9 +2,9 @@
 
 require_once dirname(__FILE__) . '/bootstrap.php';
 
-$image = new Image\Base(dirname(__FILE__) . '/source/rose.jpg');
+$image = new Image\Canvas(dirname(__FILE__) . '/source/rose.jpg');
 
-$secondImage = new Image\Base(dirname(__FILE__) . '/source/cherry.png');
+$secondImage = new Image\Canvas(dirname(__FILE__) . '/source/cherry.png');
 
 $layer = new Image\Draw\Layer($secondImage, false);
 $layer->setPosition(0, 0);

@@ -43,7 +43,7 @@
  */
 namespace Image\Draw;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
@@ -62,7 +62,7 @@ class Infobar extends DrawBase implements PluginInterface {
     public function generate() {
         $src_x = $this->_owner->imagesx();
         $src_y = $this->_owner->imagesy();
-        $temp = new Base();
+        $temp = new Canvas();
         $temp->createImageTrueColorTransparent($src_x, $src_y + 20);
         $text = str_replace("[Filename]", $this->_owner->getSettings('filename'), $this->info);
         switch ($this->position) {

@@ -41,6 +41,7 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @since     File available since Release 1.0.0
  */
+
 namespace Image\Helper;
 
 use Image\Helper\Color;
@@ -73,7 +74,7 @@ class Analyser extends HelperBase implements PluginInterface {
         
     }
 
-    public function countColors($channel = "all") {
+    public function countColors() {
         if (!isset($this->_owner->image)) {
             return false;
         }
@@ -92,11 +93,11 @@ class Analyser extends HelperBase implements PluginInterface {
             case "r":
             case "red":
                 return $this->arrayAvg($this->__count_r);
-                break;
+
             case "g":
             case "green":
                 return $this->arrayAvg($this->__count_g);
-                break;
+
             case "b":
             case "blue":
                 return $this->arrayAvg($this->__count_b);
@@ -104,10 +105,9 @@ class Analyser extends HelperBase implements PluginInterface {
             case "a":
             case "alpha":
                 return $this->arrayAvg($this->__count_a);
-                break;
+
             default:
                 return $this->arrayAvg($this->__count_colours);
-                break;
         }
     }
 
@@ -122,59 +122,62 @@ class Analyser extends HelperBase implements PluginInterface {
             case "r":
             case "red":
                 return $this->arrayMin($this->__count_r);
-                break;
+
             case "g":
             case "green":
                 return $this->arrayMin($this->__count_g);
-                break;
+
             case "b":
             case "blue":
                 return $this->arrayMin($this->__count_b);
-                break;
+
             case "a":
             case "alpha":
                 return $this->arrayMin($this->__count_a);
-                break;
+
             default:
                 return $this->arrayMin($this->__count_colours);
-                break;
         }
     }
 
     public function maxChannel($channel = "all") {
+
         if (!isset($this->_owner->image)) {
             return false;
         }
+
         if (!$this->__analyse_complete) {
             $this->analyse();
         }
+
         switch ($channel) {
             case "r":
             case "red":
                 return $this->arrayMax($this->__count_r);
-                break;
+
             case "g":
             case "green":
                 return $this->arrayMax($this->__count_g);
-                break;
+
             case "b":
             case "blue":
                 return $this->arrayMax($this->__count_b);
-                break;
+
             case "a":
             case "alpha":
                 return $this->arrayMax($this->__count_a);
-                break;
+
             default:
                 return $this->arrayMax($this->__count_colours);
-                break;
         }
     }
 
     public function hue($x, $y) {
+
         if (!isset($this->_owner->image)) {
             return false;
         }
+
         $color = $this->_owner->imageColorAt($x, $y);
         $arrColor = Color::intColorToArrayColor($color);
         list ($h, $s, $b) = $this->Hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
@@ -182,9 +185,11 @@ class Analyser extends HelperBase implements PluginInterface {
     }
 
     public function saturation($x, $y) {
+
         if (!isset($this->_owner->image)) {
             return false;
         }
+
         $color = $this->_owner->imageColorAt($x, $y);
         $arrColor = Color::intColorToArrayColor($color);
         list ($h, $s, $b) = $this->Hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
@@ -192,9 +197,11 @@ class Analyser extends HelperBase implements PluginInterface {
     }
 
     public function brightness($x, $y) {
+
         if (!isset($this->_owner->image)) {
             return false;
         }
+
         $color = $this->_owner->imageColorAt($x, $y);
         $arrColor = Color::intColorToArrayColor($color);
         list ($h, $s, $b) = $this->Hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
@@ -202,63 +209,77 @@ class Analyser extends HelperBase implements PluginInterface {
     }
 
     public function imageHue() {
+
         if (!$this->__analyse_complete) {
             $this->analyse();
         }
+
         if (!$this->__analyse_HSB_complete) {
             $this->analyseHsb();
         }
+
         return $this->arrayMax($this->__count_hue);
     }
 
     public function imageSaturation() {
+
         if (!$this->__analyse_complete) {
             $this->analyse();
         }
+
         if (!$this->__analyse_HSB_complete) {
             $this->analyseHsb();
         }
+
         return $this->arrayMax($this->__count_saturation);
     }
 
     public function imageBrightness() {
+
         if (!$this->__analyse_complete) {
             $this->analyse();
         }
+
         if (!$this->__analyse_HSB_complete) {
             $this->analyseHsb();
         }
+
         return $this->arrayMax($this->__count_brightness);
     }
 
     private function analyse() {
+
         if (!isset($this->_owner->image)) {
             return false;
         }
+
         $width = $this->_owner->imagesx();
         $height = $this->_owner->imagesy();
         for ($y = 0; $y < $height; $y++) {
             for ($x = 0; $x < $width; $x++) {
                 $color = $this->_owner->imageColorAt($x, $y);
                 $arrColor = Color::intColorToArrayColor($color);
-                $this->__count_colours[$color]++;
-                $this->__count_a[$arrColor['alpha']]++;
-                $this->__count_r[$arrColor['red']]++;
-                $this->__count_g[$arrColor['green']]++;
-                $this->__count_b[$arrColor['blue']]++;
+                $this->__count_colours[$color] ++;
+                $this->__count_a[$arrColor['alpha']] ++;
+                $this->__count_r[$arrColor['red']] ++;
+                $this->__count_g[$arrColor['green']] ++;
+                $this->__count_b[$arrColor['blue']] ++;
             }
         }
         $this->__analyse_complete = true;
     }
 
     private function analyseHsb() {
-        foreach ($this->__count_colours as $color => $count) {
+
+        foreach (array_keys($this->__count_colours) as $color) {
+
             $arrColor = Color::intColorToArrayColor($color);
             list ($h, $s, $b) = $this->Hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
-            $this->__count_hue[$h]++;
-            $this->__count_saturation[$s]++;
-            $this->__count_brightness[$b]++;
+            $this->__count_hue[$h] ++;
+            $this->__count_saturation[$s] ++;
+            $this->__count_brightness[$b] ++;
         }
+
         $this->__analyse_HSB_complete = true;
     }
 
@@ -293,20 +314,18 @@ class Analyser extends HelperBase implements PluginInterface {
     }
 
     private function Hsb($r, $g, $b) {
-        $hue = 0.0;
-        $saturation = 0.0;
-        $brightness = 0.0;
+
         $min = min($r, $g, $b);
         $max = max($r, $g, $b);
         $delta = ($max - $min);
         $brightness = $max;
-        if ($max != 0.0) {
+        if ($max != .0) {
             $saturation = $delta / $max;
         } else {
-            $saturation = 0.0;
+            $saturation = .0;
             $hue = - 1;
         }
-        if ($saturation != 0.0) {
+        if ($saturation != .0) {
             if ($r == $max) {
                 $hue = ($g - $b) / $delta;
             } else {
@@ -321,17 +340,16 @@ class Analyser extends HelperBase implements PluginInterface {
         } else {
             $hue = - 1.0;
         }
+        
         $hue = $hue * 60.0;
-        if ($hue < 0.0) {
+        
+        if ($hue < .0) {
             $hue = $hue + 360.0;
         }
-        $saturation = round($saturation * 100);
-        $brightness = round(($brightness / 255) * 100);
+
         return array(
-            $hue, $saturation, $brightness
+            $hue, round($saturation * 100), round(($brightness / 255) * 100)
         );
     }
 
-
 }
-

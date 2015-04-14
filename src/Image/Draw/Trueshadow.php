@@ -43,7 +43,7 @@
  */
 namespace Image\Draw;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
@@ -69,7 +69,7 @@ class Trueshadow extends DrawBase implements PluginInterface {
         $matrix_sum = array_sum($matrix);
         $c = 0;
         $m_offset = floor($matrix_width / 2);
-        $temp = new Base();
+        $temp = new Canvas();
         $temp->createImageTrueColorTransparent($width + ($matrix_width * 2), $height + ($matrix_width * 2));
         imagecopy($temp->image, $this->_owner->image, $matrix_width, $matrix_width, 0, 0, $width, $height);
         $w = $temp->imagesx();

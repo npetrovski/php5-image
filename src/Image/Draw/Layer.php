@@ -43,7 +43,7 @@
  */
 namespace Image\Draw;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 
@@ -53,7 +53,7 @@ class Layer extends DrawBase implements PluginInterface {
     protected $position = "br";
     protected $preserveLayerSize = true;
     
-    public function __construct(Base $img = null, $preserveLayerSize = true, $position = "br") {
+    public function __construct(Canvas $img = null, $preserveLayerSize = true, $position = "br") {
         $this->img = $img;
         $this->preserveLayerSize = $preserveLayerSize;
         $this->position = $position;

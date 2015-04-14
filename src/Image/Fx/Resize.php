@@ -43,7 +43,7 @@
  */
 namespace Image\Fx;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 
@@ -90,7 +90,7 @@ class Resize extends FxBase implements PluginInterface {
         $this->calculate();
         $dst_x = $this->canvas_x;
         $dst_y = $this->canvas_y;
-        $dst = new Base();
+        $dst = new Canvas();
         $dst->createImageTrueColorTransparent($dst_x, $dst_y);
         imagecopyresampled($dst->image, $this->_owner->image, 0, 0, 0, 0, $dst_x, $dst_y, $src_x, $src_y);
         $this->_owner->image = $dst->image;

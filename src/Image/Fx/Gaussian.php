@@ -44,7 +44,7 @@
 
 namespace Image\Fx;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
@@ -83,7 +83,7 @@ class Gaussian extends FxBase implements PluginInterface {
                 $p1[$x][$y]['a'] = 127;
             }
         }
-        $temp = new Base();
+        $temp = new Canvas();
         $temp->createImageTrueColorTransparent($width, $height);
         imagesavealpha($temp->image, true);
         imagealphablending($temp->image, true);

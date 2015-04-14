@@ -43,7 +43,7 @@
  */
 namespace Image\Draw;
 
-use Image\Base;
+use Image\Canvas;
 use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 
@@ -53,10 +53,10 @@ class Watermark extends DrawBase implements PluginInterface {
     protected $watermark;
 
     public function __construct($watermark = null, $position = "br") {
-        if ($watermark instanceof Base)  {
+        if ($watermark instanceof Canvas)  {
             $this->watermark = $watermark;
         } else if (file_exists($watermark)) {
-            $this->watermark = new Base($watermark);
+            $this->watermark = new Canvas($watermark);
         }
         $this->position = $position;
     }
