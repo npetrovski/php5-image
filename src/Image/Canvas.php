@@ -55,6 +55,20 @@ use Image\Exception as ImageException;
 class Canvas {
 
     /**
+     * Black PNG
+     * 
+     * @var string
+     */
+    private static $_blackpng = <<<BLACKPNG
+iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADqSURBVHjaYvz//z/DYAYAAcTEMMgBQAANegcCBNCg
+dyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAAN
+egcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQ
+oHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAA
+DXoHAgTQoHcgQAANegcCBNCgdyBAgAEAMpcDTTQWJVEAAAAASUVORK5CYII=
+BLACKPNG;
+    
+    /**
      * Image resource
      * 
      * @var resource
@@ -69,11 +83,11 @@ class Canvas {
     public $mid_handle = true;
     
     /**
-     * Image settings
+     * Image properties
      * 
      * @var array 
      */
-    protected $_settings = array();
+    protected $_properties = array();
     
     /**
      * Plugins stack
@@ -187,7 +201,7 @@ class Canvas {
     public function apply() {
 
         foreach ($this->_plugins as $id => $row) {
-            if ($row['plugin'] instanceof PluginInterface && false == $row['applied']) {
+            if ($row['plugin'] instanceof PluginInterface && !$row['applied']) {
                 $row['plugin']->generate();
                 $this->_plugins[$id]['applied'] = true;
             }
@@ -240,7 +254,7 @@ class Canvas {
      */
     public function createImageTrueColorTransparent($x = 100, $y = 100) {
         $this->image = imagecreatetruecolor($x, $y);
-        $blank = imagecreatefromstring(base64_decode($this->_blankpng()));
+        $blank = imagecreatefromstring(base64_decode(self::$_blackpng));
         imagesavealpha($this->image, true);
         imagealphablending($this->image, false);
         imagecopyresized($this->image, $blank, 0, 0, 0, 0, $x, $y, imagesx($blank), imagesy($blank));
@@ -256,10 +270,10 @@ class Canvas {
      * @return \Image\Canvas
      * @throws ImageException
      */
-    public function openImage($filename = "") {
-        if (file_exists($filename)) {
+    public function openImage($filename) {
+        if ($filename && file_exists($filename)) {
 
-            $reader = new DefaultReader($filename);
+            $reader = new DefaultReader();
 
             $this->image = $reader->read($filename);
 
@@ -295,6 +309,8 @@ class Canvas {
                 header("Content-type: " . image_type_to_mime_type(constant('IMAGETYPE_' . strtoupper($type))));
                 return call_user_func($gd_function, $this->image);
             }
+        } else {
+            throw new ImageException('Image type \'' . $type . '\' is not supported.');
         }
     }
 
@@ -486,8 +502,8 @@ class Canvas {
      * @param string $key
      * @return mixed
      */
-    public function getSettings($key) {
-        return isset($this->_settings[$key]) ? $this->_settings[$key] : null;
+    public function getProperty($key) {
+        return isset($this->_properties[$key]) ? $this->_properties[$key] : null;
     }
 
     /**
@@ -499,32 +515,15 @@ class Canvas {
     private function _getFileInfo($filename, $round = 2) {
         $ext = array('B', 'KB', 'MB', 'GB');
 
-        $this->_settings['filepath'] = $filename;
-        $this->_settings['filename'] = basename($filename);
-        $this->_settings['filesize_bytes'] = filesize($filename);
-        $size = $this->_settings['filesize_bytes'];
+        $this->_properties['filepath'] = $filename;
+        $this->_properties['filename'] = basename($filename);
+        $this->_properties['filesize_bytes'] = filesize($filename);
+        $size = $this->_properties['filesize_bytes'];
         for ($i = 0; $size > 1024 && $i < count($ext) - 1; $i++) {
             $size /= 1024;
         }
-        $this->_settings['filesize_formatted'] = round($size, $round) . $ext[$i];
-        $this->_settings['original_width'] = $this->imagesx();
-        $this->_settings['original_height'] = $this->imagesy();
+        $this->_properties['filesize_formatted'] = round($size, $round) . $ext[$i];
+        $this->_properties['original_width'] = $this->imagesx();
+        $this->_properties['original_height'] = $this->imagesy();
     }
-
-    /**
-     * Blank PNG
-     * 
-     * @return string
-     */
-    private function _blankpng() {
-        return <<<BLACKPNG
-iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
-dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADqSURBVHjaYvz//z/DYAYAAcTEMMgBQAANegcCBNCg
-dyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAAN
-egcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQ
-oHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAA
-DXoHAgTQoHcgQAANegcCBNCgdyBAgAEAMpcDTTQWJVEAAAAASUVORK5CYII=
-BLACKPNG;
-    }
-
 }
