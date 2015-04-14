@@ -86,9 +86,14 @@ class Color {
     public static function arrayColorToXyz($arrColor = array(0, 0, 0)) {
 
         // Normalize RGB values to 1
-        $arrColor = array_map(create_function('$item', 'return $item / 255;'), $arrColor);
+        $arrColor = array_map(function($item) {
+            return $item / 255;
+        }, $arrColor);
 
-        $arrColor = array_map(create_function('$item', '$item = ($item > 0.04045) ? pow((($item + 0.055) / 1.055), 2.4) : $item / 12.92; return ($item * 100);'), $arrColor);
+        $arrColor = array_map(function($item) {
+            $item = ($item > 0.04045) ? pow((($item + 0.055) / 1.055), 2.4) : $item / 12.92; 
+            return $item * 100;
+        }, $arrColor);
 
         //Observer. = 2°, Illuminant = D65
         $xyz = array(
@@ -115,7 +120,9 @@ class Color {
         $xyz['y'] /= 100;
         $xyz['z'] /= 108.883;
 
-        $xyz = array_map(create_function('$item', 'return ($item > 0.008856) ? pow($item, 1 / 3) : (7.787 * $item) + (16 / 116);'), $xyz);
+        $xyz = array_map(function($item) {
+            return ($item > 0.008856) ? pow($item, 1 / 3) : (7.787 * $item) + (16 / 116);
+        }, $xyz);
 
         return array(
             'l' => (116 * $xyz['y']) - 16,
