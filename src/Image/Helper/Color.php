@@ -91,7 +91,7 @@ class Color {
         }, $arrColor);
 
         $arrColor = array_map(function($item) {
-            $item = ($item > 0.04045) ? pow((($item + 0.055) / 1.055), 2.4) : $item / 12.92; 
+            $item = ($item > 0.04045) ? pow((($item + 0.055) / 1.055), 2.4) : $item / 12.92;
             return $item * 100;
         }, $arrColor);
 
@@ -174,6 +174,33 @@ class Color {
         }
 
         return $hsv;
+    }
+
+    /**
+     * Determines if current color is different from given color
+     *
+     * @param  array $colorA
+     * @param  array $colorB
+     * @param  integer $tolerance
+     * @return boolean
+     */
+    public static function differs(array $colorA, array $colorB, $tolerance = 0) {
+
+        $color_tolerance = round($tolerance * 2.55);
+        $alpha_tolerance = round($tolerance);
+        $delta = array(
+            'red' => abs($colorA['red'] - $colorB['red']),
+            'green' => abs($colorA['green'] - $colorB['green']),
+            'blue' => abs($colorA['blue'] - $colorB['blue']),
+            'alpha' => abs($colorA['alpha'] - $colorB['alpha'])
+        );
+
+        return (
+                $delta['red'] > $color_tolerance or
+                $delta['green'] > $color_tolerance or
+                $delta['blue'] > $color_tolerance or
+                $delta['alpha'] > $alpha_tolerance
+                );
     }
 
 }
