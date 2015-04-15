@@ -25,28 +25,28 @@ egcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQ
 oHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAADXoHAgTQoHcgQAANegcCBNCgdyBAAA16BwIE0KB3IEAA
 DXoHAgTQoHcgQAANegcCBNCgdyBAgAEAMpcDTTQWJVEAAAAASUVORK5CYII=
 BLACKPNG;
-    
+
     /**
      * Image resource
      * 
      * @var resource
      */
     public $image;
-    
+
     /**
      * Set as false to use the top left corner as the handle
      * 
      * @var bool 
      */
     public $mid_handle = true;
-    
+
     /**
      * Image properties
      * 
      * @var array 
      */
     protected $_properties = array();
-    
+
     /**
      * Plugins stack
      * 
@@ -73,7 +73,7 @@ BLACKPNG;
                 break;
         }
     }
-        
+
     /**
      * Plugins access
      * 
@@ -93,15 +93,15 @@ BLACKPNG;
      * @return string
      */
     public function attach(PluginInterface $plugin) {
-        
+
         $id = spl_object_hash($plugin);
         $plugin->attachToOwner($this);
-        
+
         $this->_plugins[$id] = array('plugin' => $plugin, 'applied' => false);
 
         return $id;
     }
-    
+
     /**
      * Attach image effect
      * 
@@ -115,10 +115,10 @@ BLACKPNG;
             throw new ImageException('Invalid fx class');
         }
         $this->attach($obj);
-        
-        return $this;  
+
+        return $this;
     }
-    
+
     /**
      * Attach image drawing
      * 
@@ -132,10 +132,10 @@ BLACKPNG;
             throw new ImageException('Invalid draw class');
         }
         $this->attach($obj);
-        
-        return $this;  
+
+        return $this;
     }
-    
+
     /**
      * Attach image helper
      * 
@@ -149,8 +149,8 @@ BLACKPNG;
             throw new ImageException('Invalid helper class');
         }
         $this->attach($obj);
-        
-        return $this;  
+
+        return $this;
     }
 
     /**
@@ -166,7 +166,7 @@ BLACKPNG;
                 $this->_plugins[$id]['applied'] = true;
             }
         }
-        
+
         return $this;
     }
 
@@ -184,7 +184,7 @@ BLACKPNG;
         if (!empty($color)) {
             $this->imagefill(0, 0, $color);
         }
-        
+
         return $this;
     }
 
@@ -201,10 +201,10 @@ BLACKPNG;
         if (!empty($color)) {
             $this->imagefill(0, 0, $color, $alpha);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Create an image (color transparent)
      * 
@@ -219,7 +219,7 @@ BLACKPNG;
         imagealphablending($this->image, false);
         imagecopyresized($this->image, $blank, 0, 0, 0, 0, $x, $y, imagesx($blank), imagesy($blank));
         imagedestroy($blank);
-        
+
         return $this;
     }
 
@@ -246,7 +246,7 @@ BLACKPNG;
 
             throw new ImageException('Image file does not exist');
         }
-        
+
         return $this;
     }
 
@@ -283,7 +283,7 @@ BLACKPNG;
     public function imagePng($filename = "") {
         return $this->printImage('png', $filename);
     }
-    
+
     /**
      * Outputs a JPG image
      * 
@@ -322,7 +322,7 @@ BLACKPNG;
     public function destroyImage() {
         imagedestroy($this->image);
         unset($this->image);
-        
+
         return $this;
     }
 
@@ -381,7 +381,7 @@ BLACKPNG;
      */
     public function imagefill($x = 0, $y = 0, $color = "FFFFFF", $alpha = null) {
         imagefill($this->image, $x, $y, $this->imagecolorallocate($color, $alpha));
-        
+
         return $this;
     }
 
@@ -425,7 +425,7 @@ BLACKPNG;
             }
         }
         $this->image = $temp->image;
-        
+
         return $this;
     }
 
@@ -446,7 +446,7 @@ BLACKPNG;
     public function getHandleX() {
         return ($this->mid_handle == true) ? floor($this->imagesx() / 2) : 0;
     }
-    
+
     /**
      * Gets an image height middle position
      * 
@@ -486,4 +486,20 @@ BLACKPNG;
         $this->_properties['original_width'] = $this->imagesx();
         $this->_properties['original_height'] = $this->imagesy();
     }
+
+    /**
+     * Cloning an image
+     */
+    public function __clone() {
+
+        $original = $this->image;
+        $copy = imagecreatetruecolor($this->imagesx(), $this->imagesy());
+        imagealphablending($copy, false);
+        imagesavealpha($copy, true);
+
+        imagecopy($copy, $original, 0, 0, 0, 0, $this->imagesx(), $this->imagesy());
+
+        $this->image = $copy;
+    }
+
 }

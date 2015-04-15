@@ -17,11 +17,14 @@ class Blackandwhite extends FxBase implements PluginInterface {
     }
 
     public function generate() {
+        
         $width = $this->_owner->imagesx();
         $height = $this->_owner->imagesy();
+        
         for ($x = 0; $x < 256; $x++) {
             $palette[$x] = imagecolorallocate($this->_owner->image, $x, $x, $x);
         }
+        
         for ($x = 0; $x < $width; $x++) {
             for ($y = 0; $y < $height; $y++) {
                 $rgb = $this->_owner->imageColorAt($x, $y);
@@ -42,20 +45,13 @@ class Blackandwhite extends FxBase implements PluginInterface {
                         $val = max($r, $g, $b);
                         break;
                     case "avg":
-                        $val = ($r +
-                                $g +
-                                $b) /
-                                3;
+                        $val = ($r + $g + $b) / 3;
                         break;
                     default:
-                        $val = (($r *
-                                0.299) +
-                                ($g *
-                                0.587) +
-                                ($b *
-                                0.114));
+                        $val = (($r * 0.299) + ($g * 0.587) + ($b * 0.114));
                         break;
                 }
+                
                 imagesetpixel($this->_owner->image, $x, $y, $palette[$val]);
             }
         }

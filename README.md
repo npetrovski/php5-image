@@ -322,6 +322,16 @@ $image->fx('resize', 250)
 $image->imagePng();
 ```
 
+### Rotate
+```php
+$image = new Image\Canvas(dirname(__FILE__) . '/source/apple.png');
+
+$image->fx('rotate', 35)
+      ->fx('resize', 100);
+
+$image->imagePng();
+```
+
 ### Watermark
 ```php
 $image = new Image\Canvas(dirname(__FILE__) . '/source/boat.jpg');
