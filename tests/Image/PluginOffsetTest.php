@@ -4,8 +4,8 @@ class PluginOffsetTest extends PHPUnit_Framework_TestCase {
 
     public function testPluginOffset() {
 
-        $image = new Image_Image();
-        $this->assertEquals($image->attach(new Image_Fx_Offset()), true);
+        $image = new Image\Canvas();
+        $this->assertNotEmpty($image->attach(new Image\Fx\Offset()));
 
     }
 

@@ -5,7 +5,7 @@
 
         public function testSetAndGet() {
 
-            $image = new Image_Image();
+            $image = new Image\Canvas();
 
             $image->value = 100;
 
@@ -15,13 +15,13 @@
 
         public function testSetResizeShortcut() {
 
-            $image = new Image_Image();
+            $image = new Image\Canvas();
             $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."resize.png");
 
             $this->assertEquals($image->imagesx(), 320);
             $this->assertEquals($image->imagesy(), 240);
             
-            $resize = new Image_Fx_Resize();
+            $resize = new Image\Fx\Resize();
             $resize->setResize(100,100);
 
             $attachment_id = $image->attach($resize);
@@ -38,8 +38,8 @@
         
         public function testCalculateResize() {
 
-            $image = new Image_Image();
-            $resize = new Image_Fx_Resize();
+            $image = new Image\Canvas();
+            $resize = new Image\Fx\Resize();
             $attachment_id = $image->attach($resize);
 
             if ($image->gd_support_png) {
@@ -68,12 +68,12 @@
 
         public function testCalculateResizeAndCrop() {
 
-            $image = new Image_Image();
+            $image = new Image\Canvas();
 
-            $resize = new Image_Fx_Resize();
+            $resize = new Image\Fx\Resize();
             $resize_id = $image->attach($resize);
 
-            $crop = new Image_Fx_Crop();
+            $crop = new Image\Fx\Crop();
             $crop_id = $image->attach($crop);
 
             if ($image->gd_support_png) {

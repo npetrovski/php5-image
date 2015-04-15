@@ -4,8 +4,8 @@ class PluginScanlineTest extends PHPUnit_Framework_TestCase {
 
     public function testPluginScanline() {
 
-        $image = new Image_Image();
-        $this->assertEquals($image->attach(new Image_Draw_Scanline()), true);
+        $image = new Image\Canvas();
+        $this->assertNotEmpty($image->attach(new Image\Draw\Scanline()));
 
     }
 

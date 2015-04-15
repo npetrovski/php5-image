@@ -1,0 +1,26 @@
+{
+    "name": "npetrovski/php5-image",
+    "description": "Image handling and manipulation library",
+    "keywords": ["image", "gd", "imagick", "laravel", "watermark", "thumbnail"],
+    "homepage": "https://github.com/npetrovski/php5-image",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nikolay Petrovski",
+            "email": "to.petrovski@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "ext-fileinfo": "*",
+        "ext-gd": "*"
+    },
+    "suggest": {
+        "ext-gd": "to use GD library based image processing."
+    },
+    "autoload": {
+        "psr-4": {
+            "Image\\": "src/Image"
+        }
+    }
+}

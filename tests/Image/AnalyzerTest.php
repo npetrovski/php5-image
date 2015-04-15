@@ -5,8 +5,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testSize() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE. DIRECTORY_SEPARATOR.'image.png');
         
         $this->assertEquals($image->testImageHandle(), true);
@@ -18,8 +18,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 /*
     public function testCountColors() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         
         $image->openImage(TEST_BASE. DIRECTORY_SEPARATOR. 'image.png');
 
@@ -30,8 +30,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testHue() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR.'lightgreen.png');
         $this->assertEquals($image->$analyser->hue(3, 3), 120);
         $image->destroyImage();
@@ -40,8 +40,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testBrightness() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR.'lightgreen.png');
         $this->assertEquals($image->$analyser->brightness(3, 3), 100);
         $image->destroyImage();
@@ -50,8 +50,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testSaturation() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR.'lightgreen.png');
         $this->assertEquals($image->$analyser->saturation(3, 3), 50);
         $image->destroyImage();
@@ -60,8 +60,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testAverageChannel() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR.'image.png');
         $this->assertEquals($image->$analyser->averageChannel('r'), 218);
         $this->assertEquals($image->$analyser->averageChannel('g'), 218);
@@ -72,8 +72,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testMaxChannel() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR.'image.png');
         $this->assertEquals($image->$analyser->maxChannel('r'), 255);
         $this->assertEquals($image->$analyser->maxChannel('g'), 255);
@@ -84,8 +84,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testMinChannel() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR.'image.png');
         $this->assertEquals($image->$analyser->minChannel('r'), 1);
         $this->assertEquals($image->$analyser->minChannel('g'), 1);
@@ -96,8 +96,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testImageHue() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR.'green.png');
         $this->assertEquals($image->$analyser->imageHue(), 120);
         $image->destroyImage();
@@ -106,8 +106,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testImageSaturation() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR.'green.png');
         $this->assertEquals($image->$analyser->imageSaturation(), 100);
         $image->destroyImage();
@@ -116,8 +116,8 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
 
     public function testImageBrightness() {
 
-        $image = new Image_Image();
-        $analyser = $image->attach(new Image_Helper_Analyser());
+        $image = new Image\Canvas();
+        $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE.DIRECTORY_SEPARATOR.'green.png');
         $this->assertEquals($image->$analyser->imageBrightness(), 100);
         $image->destroyImage();

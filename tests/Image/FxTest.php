@@ -5,9 +5,9 @@ class FXTest extends PHPUnit_Framework_TestCase {
 
     public function testFXStack() {
 
-        $image = new Image_Image();
-        $this->assertEquals($image->attach(new Image_Fx_Resize(50)), true);
-        $this->assertEquals($image->attach(new Image_Fx_Crop(50)), true);
+        $image = new Image\Canvas();
+        $this->assertNotEmpty($image->attach(new Image\Fx\Resize(50)));
+        $this->assertNotEmpty($image->attach(new Image\Fx\Crop(50)));
 
     }
 

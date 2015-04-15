@@ -4,8 +4,8 @@ class PluginRippleTest extends PHPUnit_Framework_TestCase {
 
     public function testPluginRipple() {
 
-        $image = new Image_Image();
-        $this->assertEquals($image->attach(new Image_Fx_Ripple()), true);
+        $image = new Image\Canvas();
+        $this->assertNotEmpty($image->attach(new Image\Fx\Ripple()));
 
     }
 
