@@ -322,11 +322,12 @@ $image->fx('resize', 250)
 $image->imagePng();
 ```
 
-### Rotate
+### Rotate & Flip
 ```php
 $image = new Image\Canvas(dirname(__FILE__) . '/source/apple.png');
 
 $image->fx('rotate', 35)
+      ->fx('flip', true, true)
       ->fx('resize', 100);
 
 $image->imagePng();

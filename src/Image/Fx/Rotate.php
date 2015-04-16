@@ -7,7 +7,7 @@ use Image\Plugin\PluginInterface;
 
 class Rotate extends FxBase implements PluginInterface {
 
-    protected $_angle = 0;
+    private $_angle = 0;
 
     public function __construct($angle = 0) {
         $this->_angle = $angle;

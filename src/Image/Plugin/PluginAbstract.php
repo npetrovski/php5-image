@@ -9,9 +9,4 @@ abstract class PluginAbstract {
     public function attachToOwner($owner) {
         $this->_owner = $owner;
     }
-
-    public function getTypeId() {
-        return $this->type_id;
-    }
-
 }

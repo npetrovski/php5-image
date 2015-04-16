@@ -7,12 +7,14 @@ use Image\Plugin\PluginInterface;
 
 class Blackandwhite extends FxBase implements PluginInterface {
 
+    protected $_algorithm;
+    
     public function __construct($algorithm = "YIQ") {
-        $this->algorithm = $algorithm;
+        $this->setAlgorithm($algorithm);
     }
 
     public function setAlgorithm($algorithm = "YIQ") {
-        $this->algorithm = $algorithm;
+        $this->_algorithm = $algorithm;
         return $this;
     }
 
@@ -31,7 +33,7 @@ class Blackandwhite extends FxBase implements PluginInterface {
                 $r = ($rgb >> 16) & 0xFF;
                 $g = ($rgb >> 8) & 0xFF;
                 $b = $rgb & 0xFF;
-                switch ($this->algorithm) {
+                switch ($this->_algorithm) {
                     case "red":
                         $val = $r;
                         break;

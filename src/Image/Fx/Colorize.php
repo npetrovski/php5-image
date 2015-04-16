@@ -8,20 +8,23 @@ use Image\Plugin\PluginInterface;
 
 class Colorize extends FxBase implements PluginInterface {
 
+    private $_find;
+    private $_replace;
+    
     public function __construct($find = '000000', $replace = '000000') {
         $this->setColorize($find, $replace);
     }
 
     public function setColorize($find = '000000', $replace = '000000') {
-        $this->find = $find;
-        $this->replace = $replace;
+        $this->_find = $find;
+        $this->_replace = $replace;
         return $this;
     }
 
     public function generate() {
 
-        $findColor = Color::hexColorToArrayColor($this->find);
-        $replaceColor = Color::hexColorToArrayColor($this->replace);
+        $findColor = Color::hexColorToArrayColor($this->_find);
+        $replaceColor = Color::hexColorToArrayColor($this->_replace);
 
         $index = imagecolorclosest($this->_owner->image, $findColor['red'], $findColor['green'], $findColor['blue']); //find
 

@@ -9,12 +9,18 @@ use Image\Helper\Color;
 
 class Canvassize extends FxBase implements PluginInterface {
 
-    public function __construct($t = 10, $r = 10, $b = 10, $l = 10, $color = "") {
-        $this->t = $t;
-        $this->r = $r;
-        $this->b = $b;
-        $this->l = $l;
-        $this->color = $color;
+    private $_top;
+    private $_right;
+    private $_bottom;
+    private $_left;
+    private $_color;
+
+    public function __construct($top = 10, $right = 10, $bottom = 10, $left = 10, $color = "") {
+        $this->_top = $top;
+        $this->_right = $right;
+        $this->_bottom = $bottom;
+        $this->_left = $left;
+        $this->_color = $color;
     }
 
     public function generate() {
@@ -22,18 +28,18 @@ class Canvassize extends FxBase implements PluginInterface {
         $height = $this->_owner->imagesy();
 
         $temp = new Canvas();
-        if (!empty($this->color)) {
-            $temp->createImageTrueColor($width + ($this->r + $this->l), $height +
-                    ($this->t + $this->b));
-            $arrColor = Color::hexColorToArrayColor($this->color);
+        if (!empty($this->_color)) {
+            $temp->createImageTrueColor($width + ($this->_right + $this->_left), $height +
+                    ($this->_top + $this->_bottom));
+            $arrColor = Color::hexColorToArrayColor($this->_color);
             $tempcolor = imagecolorallocate($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
             imagefilledrectangle($temp->image, 0, 0, $temp->imagesx(), $temp->imagesy(), $tempcolor);
         } else {
-            $temp->createImageTrueColorTransparent($width + ($this->r + $this->l), $height +
-                    ($this->t + $this->b));
+            $temp->createImageTrueColorTransparent($width + ($this->_right + $this->_left), $height +
+                    ($this->_top + $this->_bottom));
         }
 
-        imagecopy($temp->image, $this->_owner->image, $this->l, $this->t, 0, 0, $width, $height);
+        imagecopy($temp->image, $this->_owner->image, $this->_left, $this->_top, 0, 0, $width, $height);
         $this->_owner->image = $temp->image;
         unset($temp);
 

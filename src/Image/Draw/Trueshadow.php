@@ -9,28 +9,46 @@ use Image\Helper\Color;
 
 class Trueshadow extends DrawBase implements PluginInterface {
 
+    private $_distance;
+    private $_color;
+    private $_matrix;
+    
     public function __construct($distance = 10, $color = "888888", $matrix = array(1, 2, 4, 4, 8, 8, 12, 12, 16, 16, 24, 32, 32, 24, 16, 16, 12, 12, 8, 8, 4, 4, 2, 1)) {
-        $this->distance = $distance;
-        $this->color = $color;
-        $this->matrix = $matrix;
+        $this->setDistance($distance); 
+        $this->setColor($color);
+        $this->setMatrix($matrix);
     }
 
     public function setDistance($distance = 10) {
-        $this->distance = $distance;
+        $this->_distance = $distance;
+        return $this;
+    }
+    
+    public function setColor($color = "888888") {
+        $this->_color = $color;
+        return $this;
+    }
+    
+    public function setMatrix($matrix = array(1, 2, 4, 4, 8, 8, 12, 12, 16, 16, 24, 32, 32, 24, 16, 16, 12, 12, 8, 8, 4, 4, 2, 1)) {
+        $this->_matrix = $matrix;
+        return $this;
     }
 
     public function generate() {
         $width = $this->_owner->imagesx();
         $height = $this->_owner->imagesy();
-        $distance = $this->distance;
-        $matrix = $this->matrix;
+        
+        $distance = $this->_distance;
+        $matrix = $this->_matrix;
+        
         $matrix_width = count($matrix);
         $matrix_sum = array_sum($matrix);
-        $c = 0;
+
         $m_offset = floor($matrix_width / 2);
         $temp = new Canvas();
         $temp->createImageTrueColorTransparent($width + ($matrix_width * 2), $height + ($matrix_width * 2));
         imagecopy($temp->image, $this->_owner->image, $matrix_width, $matrix_width, 0, 0, $width, $height);
+        
         $w = $temp->imagesx();
         $h = $temp->imagesy();
         for ($y = 0; $y < $h; $y++) {
@@ -50,8 +68,8 @@ class Trueshadow extends DrawBase implements PluginInterface {
         $w = $this->_owner->imagesx();
         $h = $this->_owner->imagesy();
         $d_offset = $distance - $matrix_width;
-        if ($this->color != "image") {
-            $arrColor = Color::hexColorToArrayColor($this->color);
+        if ($this->_color != "image") {
+            $arrColor = Color::hexColorToArrayColor($this->_color);
         }
         
         $temp->createImageTrueColorTransparent($width + $distance + $m_offset, $height + $distance + $m_offset);
@@ -89,7 +107,7 @@ class Trueshadow extends DrawBase implements PluginInterface {
                     $sumb += $p1[$i][$xy]['b'] * $matrix[$k];
                     $suma += $p1[$i][$xy]['a'] * $matrix[$k];
                 }
-                if ($this->color != "image") {
+                if ($this->_color != "image") {
                     $col = imagecolorallocatealpha($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue'], ($suma / $matrix_sum));
                 } else {
                     $col = imagecolorallocatealpha($temp->image, ($sumr /

@@ -19,10 +19,14 @@ class Trim extends FxBase implements PluginInterface {
     
     
     public function __construct($base = null, $away = null, $tolerance = 0, $feather = 0) {
+        $this->setTrim($base, $away, $tolerance, $feather);
+    }
+    
+    public function setTrim($base = null, $away = null, $tolerance = 0, $feather = 0) {
         $this->_base = $base;
         $this->_away = $away;
         $this->_tolerance = $tolerance;
-        $this->_feather = $feather;
+        $this->_feather = $feather; 
     }
 
     public function generate() {

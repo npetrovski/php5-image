@@ -30,8 +30,8 @@ class Sobel extends FxBase implements PluginInterface {
                 - 0, - 1, - 0
             )
         );
-        $m_elements = count($mx);
-        $m_offset = floor($m_elements / 2);
+
+
         $p = array();
         for ($y = 0; $y < $height; $y++) {
             for ($x = 0; $x < $width; $x++) {

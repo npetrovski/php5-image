@@ -9,7 +9,7 @@ use Image\Plugin\PluginInterface;
 class Filter extends FxBase implements PluginInterface {
 
     
-    protected $filter_args = array();
+    private $_filter_args = array();
     
     /**
      *
@@ -46,14 +46,13 @@ class Filter extends FxBase implements PluginInterface {
      *      IMG_FILTER_COLORIZE: Alpha channel, A value between 0 and 127. 0 indicates completely opaque while 127 indicates completely transparent.
      *
      */
-    public function __construct() {
-                        
-        $this->filter_args = func_get_args();
+    public function __construct() {        
+        $this->_filter_args = func_get_args();
     }
 
     public function generate() {
-        if (count($this->filter_args) > 0) {
-            $args = $this->filter_args;
+        if (count($this->_filter_args) > 0) {
+            $args = $this->_filter_args;
             array_unshift($args, $this->_owner->image);
             return call_user_func_array('imagefilter', $args);
         } 

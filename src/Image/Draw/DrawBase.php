@@ -5,9 +5,7 @@ namespace Image\Draw;
 use Image\Plugin\PluginAbstract;
 
 abstract class DrawBase extends PluginAbstract
-{
-    public $type_id = "draw";
-    
+{    
     public static function factory($name, $args) {
         $className = __NAMESPACE__ . '\\' . ucfirst(strtolower($name));
 

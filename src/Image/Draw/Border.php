@@ -9,24 +9,27 @@ use Image\Helper\Color;
 
 class Border extends DrawBase implements PluginInterface {
 
+    private $_padding;
+    private $_color;
+
     public function __construct($padding = 10, $color = "000000") {
-        $this->padding = $padding;
-        $this->color = $color;
+        $this->_padding = $padding;
+        $this->_color = $color;
     }
 
     public function setBorder($padding = 10, $color = "000000") {
-        $this->padding = $padding;
-        $this->color = $color;
+        $this->_padding = $padding;
+        $this->_color = $color;
         return $this;
     }
 
     public function setPadding($padding = 10) {
-        $this->padding = $padding;
+        $this->_padding = $padding;
         return $this;
     }
 
     public function setColor($color = "000000") {
-        $this->color = $color;
+        $this->_color = $color;
         return $this;
     }
 
@@ -35,8 +38,8 @@ class Border extends DrawBase implements PluginInterface {
         $width = $this->_owner->imagesx();
         $height = $this->_owner->imagesy();
 
-        $padding = $this->padding;
-        $arrColor = Color::hexColorToArrayColor($this->color);
+        $padding = $this->_padding;
+        $arrColor = Color::hexColorToArrayColor($this->_color);
 
         $temp = new Canvas();
         $temp->createImageTrueColor($width + ($padding * 2), $height + ($padding * 2));

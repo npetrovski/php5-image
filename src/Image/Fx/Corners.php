@@ -8,6 +8,10 @@ use Image\Plugin\PluginInterface;
 
 class Corners extends FxBase implements PluginInterface {
 
+    private $_radius_x;
+    
+    private $_radius_y;
+    
     /**
      * Corner
      * 
@@ -28,13 +32,12 @@ AAAAAElFTkSuQmCC=
 CORNERPNG;
 
     public function __construct($radius_x = 0, $radius_y = 0) {
-        $this->radius_x = $radius_x;
-        $this->radius_y = $radius_y;
+        $this->setRadius($radius_x, $radius_y);
     }
 
     public function setRadius($x = 10, $y = 10) {
-        $this->radius_x = $x;
-        $this->radius_y = $y;
+        $this->_radius_x = $x;
+        $this->_radius_y = $y;
         return $this;
     }
 
@@ -47,11 +50,11 @@ CORNERPNG;
         $image_y = $this->_owner->imagesy();
         $gdCorner = imagecreatefromstring(base64_decode(self::$_cornerpng));
         $corner = new Canvas();
-        $corner->createImageTrueColorTransparent($this->radius_x, $this->radius_y);
+        $corner->createImageTrueColorTransparent($this->_radius_x, $this->_radius_y);
         
-        imagecopyresampled($corner->image, $gdCorner, 0, 0, 0, 0, $this->radius_x, $this->radius_y, imagesx($gdCorner), imagesy($gdCorner));
-        $corner_x = $this->radius_x - 1;
-        $corner_y = $this->radius_y - 1;
+        imagecopyresampled($corner->image, $gdCorner, 0, 0, 0, 0, $this->_radius_x, $this->_radius_y, imagesx($gdCorner), imagesy($gdCorner));
+        $corner_x = $this->_radius_x - 1;
+        $corner_y = $this->_radius_y - 1;
         for ($y = 0; $y < $corner_y; $y++) {
             for ($x = 0; $x < $corner_x; $x++) {
                 for ($c = 0; $c < 4; $c++) {

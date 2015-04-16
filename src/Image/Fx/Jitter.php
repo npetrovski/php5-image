@@ -7,20 +7,30 @@ use Image\Plugin\PluginInterface;
 
 class Jitter extends FxBase implements PluginInterface {
 
+    private $_jitter;
+    
+    private $_wrap_around;
+
     public function __construct($jitter = 3, $wrap_around = true) {
-        $this->jitter = $jitter;
-        $this->wrap_around = $wrap_around;
+        $this->setJitter($jitter, $wrap_around);
+    }
+    
+    public function setJitter($jitter, $wrap_around = true) {
+        $this->_jitter = $jitter;
+        $this->_wrap_around = $wrap_around;
     }
 
     public function generate() {
+        
         $width = $this->_owner->imagesx();
         $height = $this->_owner->imagesy();
+        
         for ($y = 0; $y < $height; $y++) {
             for ($x = 0; $x < $width; $x++) {
-                $dis_x = $x + (rand(0, $this->jitter) - ($this->jitter / 2));
-                $dis_y = $y + (rand(0, $this->jitter) - ($this->jitter / 2));
+                $dis_x = $x + (rand(0, $this->_jitter) - ($this->_jitter / 2));
+                $dis_y = $y + (rand(0, $this->_jitter) - ($this->_jitter / 2));
 
-                if ($this->wrap_around == 1) {
+                if ($this->_wrap_around) {
                     $dis_x = ($dis_x < 0) ? $dis_x + $width : $dis_x;
                     $dis_x = ($dis_x > $width) ? $dis_x - $width : $dis_x;
                     $dis_y = ($dis_y < 0) ? $dis_y + $height : $dis_y;

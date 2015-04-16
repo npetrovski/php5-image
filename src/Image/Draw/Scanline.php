@@ -8,26 +8,47 @@ use Image\Plugin\PluginInterface;
 
 class Scanline extends DrawBase implements PluginInterface {
 
+    private $_width;
+    private $_color;
+    private $_light_alpha;
+    private $_dark_alpha;
+
     public function __construct($width = 4, $color = "FFFFFF", $light_alpha = 100, $dark_alpha = 80) {
-        $this->width = $width;
-        $this->color = $color;
-        $this->light_alpha = $light_alpha;
-        $this->dark_alpha = $dark_alpha;
+        $this->setWidth($width);
+        $this->setColor($color);
+        $this->setAlpha($light_alpha, $dark_alpha);
+    }
+
+    public function setWidth($width = 4) {
+        $this->_width = $width;
+        return $this;
+    }
+
+    public function setColor($color = "FFFFFF") {
+        $this->_color = $color;
+        return $this;
+    }
+
+    public function setAlpha($light_alpha = 100, $dark_alpha = 80) {
+        $this->_light_alpha = $light_alpha;
+        $this->_dark_alpha = $dark_alpha;
+        return $this;
     }
 
     public function generate() {
         $alt = 0;
         imagesavealpha($this->_owner->image, true);
         imagealphablending($this->_owner->image, true);
+
+        $color = Color::hexColorToArrayColor($this->_color);
+        $l = imagecolorallocatealpha($this->_owner->image, $color['red'], $color['green'], $color['blue'], $this->_light_alpha);
+        $d = imagecolorallocatealpha($this->_owner->image, $color['red'], $color['green'], $color['blue'], $this->_dark_alpha);
         
-        $arrColor = Color::hexColorToArrayColor($this->color);
-        $l = imagecolorallocatealpha($this->_owner->image, $arrColor['red'], $arrColor['green'], $arrColor['blue'], $this->light_alpha);
-        $d = imagecolorallocatealpha($this->_owner->image, $arrColor['red'], $arrColor['green'], $arrColor['blue'], $this->dark_alpha);
-        for ($x = 0; $x < $this->_owner->imagesy(); $x += $this->width) {
+        for ($x = 0; $x < $this->_owner->imagesy(); $x += $this->_width) {
             if ($alt++ % 2 == 0) {
-                imagefilledrectangle($this->_owner->image, 0, $x, $this->_owner->imagesx(), $x + $this->width - 1, $l);
+                imagefilledrectangle($this->_owner->image, 0, $x, $this->_owner->imagesx(), $x + $this->_width - 1, $l);
             } else {
-                imagefilledrectangle($this->_owner->image, 0, $x, $this->_owner->imagesx(), $x + $this->width - 1, $d);
+                imagefilledrectangle($this->_owner->image, 0, $x, $this->_owner->imagesx(), $x + $this->_width - 1, $d);
             }
         }
         return true;

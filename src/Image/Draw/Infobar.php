@@ -9,13 +9,46 @@ use Image\Helper\Color;
 
 class Infobar extends DrawBase implements PluginInterface {
 
+    private $_info;
+    private $_position;
+    private $_justify;
+    private $_barcolor;
+    private $_textcolor;
+    private $_font = 2;
+
     public function __construct($info = "[Filename]", $position = "b", $justify = "c", $barcolor = "000000", $textcolor = "FFFFFF") {
-        $this->info = $info;
-        $this->position = $position;
-        $this->justify = $justify;
-        $this->barcolor = $barcolor;
-        $this->textcolor = $textcolor;
-        $this->font = 2;
+
+        $this->setInfo($info);
+        $this->setTextcolor($textcolor);
+        $this->setBarcolor($barcolor);
+        $this->setJustify($justify);
+        $this->setPosition($position);
+    }
+
+    public function setInfo($info = "[Filename]") {
+        $this->_info = $info;
+        return $this;
+    }
+
+    public function setTextcolor($textcolor = "FFFFFF") {
+        $this->_textcolor = $textcolor;
+        return $this;
+    }
+
+    public function setBarcolor($barcolor = "000000") {
+        $this->_barcolor = $barcolor;
+        return $this;
+    }
+
+    public function setJustify($justify = "c") {
+        $this->_justify = $justify;
+        return $this;
+    }
+
+    public function setPosition($position = "b") {
+        $this->_position = $position;
+
+        return $this;
     }
 
     public function generate() {
@@ -23,8 +56,8 @@ class Infobar extends DrawBase implements PluginInterface {
         $src_y = $this->_owner->imagesy();
         $temp = new Canvas();
         $temp->createImageTrueColorTransparent($src_x, $src_y + 20);
-        $text = str_replace("[Filename]", $this->_owner->getProperty('filename'), $this->info);
-        switch ($this->position) {
+        $text = str_replace("[Filename]", $this->_owner->getProperty('filename'), $this->_info);
+        switch ($this->_position) {
             case "t":
                 $x = 0;
                 $y = 20;
@@ -41,30 +74,30 @@ class Infobar extends DrawBase implements PluginInterface {
                 return false;
                 break;
         }
-        switch ($this->justify) {
+        switch ($this->_justify) {
             case "l":
                 $text_x = 3;
                 break;
             case "c":
-                $text_x = ($src_x - (imagefontwidth($this->font) *
+                $text_x = ($src_x - (imagefontwidth($this->_font) *
                         strlen($text))) / 2;
                 break;
             case "r":
-                $text_x = $src_x - 3 - (imagefontwidth($this->font) *
+                $text_x = $src_x - 3 - (imagefontwidth($this->_font) *
                         strlen($text));
                 break;
         }
         //Draw the bar background
-        $arrColor = Color::hexColorToArrayColor($this->barcolor);
-        $bar_color = imagecolorallocate($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
+        $color = Color::hexColorToArrayColor($this->_barcolor);
+        $bar_color = imagecolorallocate($temp->image, $color['red'], $color['green'], $color['blue']);
         imagefilledrectangle($temp->image, 0, $bar_y, $src_x, 20, $bar_color);
         //Copy the image
         imagecopy($temp->image, $this->_owner->image, $x, $y, 0, 0, $src_x, $src_y);
-        
+
         //Draw the text (to be replaced with image_draw_text one day
-        $arrColor = Color::hexColorToArrayColor($this->textcolor);
-        $text_color = imagecolorallocate($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
-        imagestring($temp->image, $this->font, $text_x, $text_y, $text, $text_color);
+        $color = Color::hexColorToArrayColor($this->_textcolor);
+        $text_color = imagecolorallocate($temp->image, $color['red'], $color['green'], $color['blue']);
+        imagestring($temp->image, $this->_font, $text_x, $text_y, $text, $text_color);
         $this->_owner->image = $temp->image;
         unset($temp);
         return true;
