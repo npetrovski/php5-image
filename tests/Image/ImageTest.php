@@ -47,7 +47,7 @@ class ImageTest extends PHPUnit_Framework_TestCase {
 
 
         $this->assertNotEmpty($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.jpg")); //24 bit JPEG image
-        $this->assertEquals($image->imageColorAt(3,3), 2279); //Solid blue (with jpg compression so it's the wrong color)
+        $this->assertEquals($image->imageColorAt(3,3), 4537); //Solid blue (with jpg compression so it's the wrong color)
 
     }
     
