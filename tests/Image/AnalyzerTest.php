@@ -9,7 +9,7 @@ class AnalyzerTest extends PHPUnit_Framework_TestCase
         $analyser = $image->attach(new Image\Helper\Analyser());
         $image->openImage(TEST_BASE. DIRECTORY_SEPARATOR.'image.png');
         
-        $this->assertEquals($image->testImageHandle(), true);
+        $this->assertEquals((isset($image->image) && 'gd' == get_resource_type($image->image)),  true);
         $this->assertEquals($image->imagesx(), 100);
         $this->assertEquals($image->imagesy(), 100);
         $image->destroyImage();

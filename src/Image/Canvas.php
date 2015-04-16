@@ -430,15 +430,6 @@ BLACKPNG;
     }
 
     /**
-     * Test image type
-     * 
-     * @return bool
-     */
-    public function testImageHandle() {
-        return (bool) (isset($this->image) && 'gd' == get_resource_type($this->image));
-    }
-
-    /**
      * Gets an image width middle position
      * 
      * @return int

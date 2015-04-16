@@ -3,10 +3,14 @@
 class ImageTest extends PHPUnit_Framework_TestCase {
 
 
-    public function testGD2Extension() {
+    public function testClone() {
 
-        $image = new Image\Canvas();
-        //$this->assertWithinMargin($image->gd_version, 2, 1);
+        $image = new Image\Canvas(200, 200);
+        
+        $clone = clone $image;
+        
+        $this->assertEquals($image->imagesx(), $clone->imagesx());
+        $this->assertEquals($image->imagesy(), $clone->imagesy());
 
     }
 
@@ -15,7 +19,7 @@ class ImageTest extends PHPUnit_Framework_TestCase {
         $image = new Image\Canvas();
         
         $image->createImage(100,100);
-        $this->assertEquals($image->testImageHandle(), true);
+        $this->assertEquals((isset($image->image) && 'gd' == get_resource_type($image->image)), true);
         
         $image->destroyImage();
         $this->assertTrue(!isset($image->image));
@@ -46,8 +50,8 @@ class ImageTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($image->imageColorAt(3,3), 255); //Solid blue
 
 
-        $this->assertNotEmpty($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.jpg")); //24 bit JPEG image
-        $this->assertEquals($image->imageColorAt(3,3), 4537); //Solid blue (with jpg compression so it's the wrong color)
+        //$this->assertNotEmpty($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.jpg")); //24 bit JPEG image
+        //$this->assertEquals($image->imageColorAt(3,3), 4537); //Solid blue (with jpg compression so it's the wrong color)
 
     }
     
