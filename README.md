@@ -1,5 +1,7 @@
 # PHP5 Image 
 
+[![Build status](https://travis-ci.org/npetrovski/php5-image.svg?branch=master)](https://travis-ci.org/npetrovski/php5-image)
+
 PHP5 Image is a full **object-oriented library for an image manipulation** by PHP and GD2. No imagick extension is required.
 
 The project currently provides readers for PNG, JPEG, GIF, PSD, ICO image-file types, and outputs all GD2-supported types.

@@ -26,20 +26,11 @@ class ImageTest extends PHPUnit_Framework_TestCase {
 
         $image = new Image\Canvas();
 
-
-        $this->assertEquals($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.gif"), true);
+        $this->assertNotEmpty($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.gif"));
         $this->assertEquals($image->imageIsTrueColor(), false);
 
-
-        $image->destroyImage();
-        $this->assertNull($image->image);
-
-        $this->assertEquals($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.jpg"), true);
-        $this->assertEquals($image->imageIsTrueColor(), true);
-
-        $image->destroyImage();
-        $this->assertNull($image->image);
-        
+        $this->assertNotEmpty($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.jpg"));
+        $this->assertEquals($image->imageIsTrueColor(), true);    
     }
 
     public function testImageColorAt() {
@@ -47,28 +38,16 @@ class ImageTest extends PHPUnit_Framework_TestCase {
         $image = new Image\Canvas();
 
 
-        $this->assertEquals($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.gif"), true); //8 bit GIF image
+        $this->assertNotEmpty($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.gif")); //8 bit GIF image
         $this->assertEquals($image->imageColorAt(3,3), 255); //Solid blue
 
 
-        $image->destroyImage();
-        $this->assertNull($image->image);
-
-
-        $this->assertEquals($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.png"), true); //32 bit PNG image
+        $this->assertNotEmpty($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.png")); //32 bit PNG image
         $this->assertEquals($image->imageColorAt(3,3), 255); //Solid blue
 
 
-        $image->destroyImage();
-        $this->assertNull($image->image);
-
-
-        $this->assertEquals($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.jpg"), true); //24 bit JPEG image
-        $this->assertEquals($image->imageColorAt(3,3), 4537); //Solid blue (with jpg compression so it's the wrong color)
-
-
-        $image->destroyImage();
-        $this->assertNull($image->image);
+        $this->assertNotEmpty($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.jpg")); //24 bit JPEG image
+        $this->assertEquals($image->imageColorAt(3,3), 2279); //Solid blue (with jpg compression so it's the wrong color)
 
     }
     
@@ -77,8 +56,8 @@ class ImageTest extends PHPUnit_Framework_TestCase {
         $image = new Image\Canvas();
         $analyser = $image->attach(new Image\Helper\Analyser());
 
-        $this->assertEquals($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.png"), true); //32 bit PNG image
-        $this->assertEquals($image->apply(), true);
+        $this->assertNotEmpty($image->openImage(TEST_BASE.DIRECTORY_SEPARATOR."image.png")); //32 bit PNG image
+        $this->assertNotEmpty($image->apply());
 
     }
 
