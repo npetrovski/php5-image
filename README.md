@@ -1,17 +1,17 @@
-# PHP5 Image Manipulation Library 
+# PHP5 Image 
 
-PHP5 Image is a full **object-oriented library for an image manipulation by PHP and GD2**. It is an extended version of [http://code.google.com/p/php-image/ php-image] project and can be used either standalone or inside [http://framework.zend.com/ Zend Framework] projects.
+PHP5 Image is a full **object-oriented library for an image manipulation** by PHP and GD2. No imagick extension is required.
 
 The project currently provides readers for PNG, JPEG, GIF, PSD, ICO image-file types, and outputs all GD2-supported types.
 
 ## Requirements
 
 - PHP >=5.3
-- Fileinfo Extension
-
-![php5-image](/php5-image.png "Title")
+- GD2 extension
+- Fileinfo extension
 
 ## Examples:
+![php5-image](/php5-image.png "Title")
 
 ### Canvas Size
 ```php
