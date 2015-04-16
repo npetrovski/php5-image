@@ -14,9 +14,13 @@
         "php": ">=5.3.0",
         "ext-gd": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "3.*"
+    },
     "autoload": {
         "psr-4": {
             "Image\\": "src/Image"
         }
-    }
+    },
+    "minimum-stability": "stable"
 }
