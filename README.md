@@ -8,7 +8,6 @@ The project currently provides readers for PNG, JPEG, GIF, PSD, ICO image-file t
 
 - PHP >=5.3
 - GD2 extension
-- Fileinfo extension
 
 ## Examples:
 ![php5-image](/php5-image.png "Title")
