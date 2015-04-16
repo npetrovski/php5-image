@@ -23,6 +23,7 @@ set_include_path(
 
 function _autoload($class) {
     if (0 === strpos($class, 'Image')) {
+        $class = str_replace('\\', '/', $class);
         require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . $class . '.php');
     }
 }
