@@ -2,29 +2,30 @@
 
 namespace Image\Fx;
 
-use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 
-class Ripple extends FxBase implements PluginInterface {
-
+class Ripple extends FxBase implements PluginInterface
+{
     private $_frequency;
     private $_amplitude;
     private $_wrap_around;
 
-    public function __construct($frequency = 3, $amplitude = 4, $wrap_around = true) {
+    public function __construct($frequency = 3, $amplitude = 4, $wrap_around = true)
+    {
         $this->setRipple($frequency, $amplitude, $wrap_around);
     }
 
-    public function setRipple($frequency = 3, $amplitude = 4, $wrap_around = true) {
+    public function setRipple($frequency = 3, $amplitude = 4, $wrap_around = true)
+    {
         $this->_frequency = $frequency;
         $this->_amplitude = $amplitude;
         $this->_wrap_around = $wrap_around;
     }
 
-    public function generate() {
-
-        $width = $this->_owner->imagesx();
-        $height = $this->_owner->imagesy();
+    public function generate()
+    {
+        $width = $this->_owner->getImageWidth();
+        $height = $this->_owner->getImageHeight();
         $map = array();
 
         for ($y = 0; $y < $height; $y++) {
@@ -48,7 +49,7 @@ class Ripple extends FxBase implements PluginInterface {
         }
 
         $this->_owner->displace($map);
+
         return true;
     }
-
 }

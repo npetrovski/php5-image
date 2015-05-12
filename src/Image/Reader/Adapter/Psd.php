@@ -4,16 +4,16 @@ namespace Image\Reader\Adapter;
 
 use Image\Reader\ReaderAbstract;
 
-class Psd extends ReaderAbstract {
-
+class Psd extends ReaderAbstract
+{
     public $infoArray;
     public $fp;
     public $fileName;
     public $tempFileName;
     public $colorBytesLength;
 
-    private function _init($filename) {
-
+    private function _init($filename)
+    {
         set_time_limit(0);
         $this->infoArray = array();
         $this->fileName = $filename;
@@ -27,7 +27,6 @@ class Psd extends ReaderAbstract {
             $this->infoArray['columns'] = $this->_getInteger(4);
             $this->infoArray['colorDepth'] = $this->_getInteger(2);
             $this->infoArray['colorMode'] = $this->_getInteger(2);
-
 
             /* COLOR MODE DATA SECTION */ //4bytes Length The length of the following color data.
             $this->infoArray['colorModeDataSectionLength'] = $this->_getInteger(4);
@@ -49,22 +48,25 @@ class Psd extends ReaderAbstract {
 
             if ($this->infoArray['colorMode'] == 2) {
                 $this->infoArray['error'] = 'images with indexed colours are not supported yet';
+
                 return false;
             }
         } else {
             $this->infoArray['error'] = 'invalid or unsupported psd';
+
             return false;
         }
     }
 
     /**
-     * Return an image resource from file or URL
-     * 
+     * Return an image resource from file or URL.
+     *
      * @param string $filename
+     *
      * @return resource an image resource identifier on success, false on errors.
      */
-    public function getImage($filename) {
-
+    public function getImage($filename)
+    {
         $this->_init($filename);
 
         // decompress image data if required
@@ -73,8 +75,9 @@ class Psd extends ReaderAbstract {
             case 1:
                 // packed bits
                 $this->infoArray['scanLinesByteCounts'] = array();
-                for ($i = 0; $i < ($this->infoArray['rows'] * $this->infoArray['channels']); $i++)
+                for ($i = 0; $i < ($this->infoArray['rows'] * $this->infoArray['channels']); $i++) {
                     $this->infoArray['scanLinesByteCounts'][] = $this->_getInteger(2);
+                }
                 $this->tempFileName = tempnam(sys_get_temp_dir(), 'decompressedImageData');
                 $tfp = fopen($this->tempFileName, 'wb');
                 foreach ($this->infoArray['scanLinesByteCounts'] as $scanLinesByteCount) {
@@ -103,14 +106,17 @@ class Psd extends ReaderAbstract {
                         break;
                     case 0:
                         // bit by bit
-                        if ($columnPointer == 0)
+                        if ($columnPointer == 0) {
                             $bitPointer = 0;
-                        if ($bitPointer == 0)
+                        }
+                        if ($bitPointer == 0) {
                             $currentByteBits = str_pad(base_convert(bin2hex(fread($this->fp, 1)), 16, 2), 8, '0', STR_PAD_LEFT);
+                        }
                         $r = $g = $b = (($currentByteBits[$bitPointer] == '1') ? 0 : 255);
                         $bitPointer++;
-                        if ($bitPointer == 8)
+                        if ($bitPointer == 8) {
                             $bitPointer = 0;
+                        }
                         break;
 
                     case 1:
@@ -175,8 +181,10 @@ class Psd extends ReaderAbstract {
             }
         }
         fclose($this->fp);
-        if (isset($this->tempFileName))
+        if (isset($this->tempFileName)) {
             unlink($this->tempFileName);
+        }
+
         return $image;
     }
 
@@ -185,27 +193,29 @@ class Psd extends ReaderAbstract {
      * n Meaning
      * 0 to 127 Copy the next n + 1 symbols verbatim
      * -127 to -1 Repeat the next symbol 1 - n times
-     * -128 Do nothing
-     * 
+     * -128 Do nothing.
+     *
      * Decoding:
      * Step 1. Read the block header (n).
      * Step 2. If the header is an EOF exit.
      * Step 3. If n is non-negative, copy the next n + 1 symbols to the output stream and go to step 1.
      * Step 4. If n is negative, write 1 - n copies of the next symbol to the output stream and go to step 1.
-     * 
+     *
      * @param type $string
-     * @return string 
+     *
+     * @return string
      */
-    private function _getPackedBitsDecoded($string) {
-
+    private function _getPackedBitsDecoded($string)
+    {
         $stringPointer = 0;
         $returnString = '';
 
         while (1) {
-            if (isset($string[$stringPointer]))
+            if (isset($string[$stringPointer])) {
                 $headerByteValue = $this->_unsignedToSigned(hexdec(bin2hex($string[$stringPointer])), 1);
-            else
+            } else {
                 return $returnString;
+            }
             $stringPointer++;
 
             if ($headerByteValue >= 0) {
@@ -226,33 +236,38 @@ class Psd extends ReaderAbstract {
         }
     }
 
-    private function _unsignedToSigned($int, $byteSize = 1) {
+    private function _unsignedToSigned($int, $byteSize = 1)
+    {
         switch ($byteSize) {
             case 1:
-                if ($int < 128)
+                if ($int < 128) {
                     return $int;
-                else
+                } else {
                     return -256 + $int;
+                }
                 break;
 
             case 2:
-                if ($int < 32768)
+                if ($int < 32768) {
                     return $int;
-                else
+                } else {
                     return -65536 + $int;
+                }
 
             case 4:
-                if ($int < 2147483648)
+                if ($int < 2147483648) {
                     return $int;
-                else
+                } else {
                     return -4294967296 + $int;
+                }
 
             default:
                 return $int;
         }
     }
 
-    private function _hexReverse($hex) {
+    private function _hexReverse($hex)
+    {
         $output = '';
 
         if (strlen($hex) % 2) {
@@ -266,7 +281,8 @@ class Psd extends ReaderAbstract {
         return $output;
     }
 
-    private function _getInteger($byteCount = 1) {
+    private function _getInteger($byteCount = 1)
+    {
         switch ($byteCount) {
             case 4:
                 // for some strange reason this is still broken...
@@ -281,5 +297,4 @@ class Psd extends ReaderAbstract {
                 return hexdec($this->_hexReverse(bin2hex(fread($this->fp, $byteCount))));
         }
     }
-
 }

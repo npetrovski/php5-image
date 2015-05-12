@@ -3,24 +3,24 @@
 namespace Image\Fx;
 
 use Image\Canvas;
-use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 
-class Flip extends FxBase implements PluginInterface {
-
+class Flip extends FxBase implements PluginInterface
+{
     private $_flip_x = false;
     private $_flip_y = false;
 
-    public function __construct($flip_x = true, $flip_y = false) {
+    public function __construct($flip_x = true, $flip_y = false)
+    {
         $this->_flip_x = $flip_x;
         $this->_flip_y = $flip_y;
     }
 
-    public function generate() {
-
+    public function generate()
+    {
         if ($this->_flip_x || $this->_flip_y) {
-            $src_x = $this->_owner->imagesx();
-            $src_y = $this->_owner->imagesy();
+            $src_x = $this->_owner->getImageWidth();
+            $src_y = $this->_owner->getImageHeight();
 
             $flip = new Canvas($src_x, $src_y);
             if ($this->_flip_x == true) {
@@ -40,7 +40,7 @@ class Flip extends FxBase implements PluginInterface {
             $this->_owner->image = $flip->image;
             unset($flip);
         }
+
         return true;
     }
-
 }

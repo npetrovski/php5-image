@@ -2,8 +2,8 @@
 
 namespace Image\Plugin;
 
-interface PluginInterface {
-
+interface PluginInterface
+{
     public function attachToOwner($owner);
 
     public function generate();

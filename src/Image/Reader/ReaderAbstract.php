@@ -4,15 +4,15 @@ namespace Image\Reader;
 
 use Image\Plugin\PluginAbstract;
 
-abstract class ReaderAbstract extends PluginAbstract {
-
-    public $type_id = "reader_adapter";
+abstract class ReaderAbstract extends PluginAbstract
+{
+    public $type_id = 'reader_adapter';
     protected $_supportGD;
 
     abstract public function getImage($filename);
 
-    protected function _detectGD($key = '') {
-
+    protected function _detectGD($key = '')
+    {
         if (is_null($this->_supportGD)) {
             $gd_info = gd_info();
 
@@ -30,5 +30,4 @@ abstract class ReaderAbstract extends PluginAbstract {
             return $this->_supportGD[$key];
         }
     }
-
 }

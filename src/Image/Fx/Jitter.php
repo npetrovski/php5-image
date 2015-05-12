@@ -2,28 +2,31 @@
 
 namespace Image\Fx;
 
-use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 
-class Jitter extends FxBase implements PluginInterface {
-
+class Jitter extends FxBase implements PluginInterface
+{
     private $_jitter;
-    
+
     private $_wrap_around;
 
-    public function __construct($jitter = 3, $wrap_around = true) {
+    public function __construct($jitter = 3, $wrap_around = true)
+    {
         $this->setJitter($jitter, $wrap_around);
     }
-    
-    public function setJitter($jitter, $wrap_around = true) {
+
+    public function setJitter($jitter, $wrap_around = true)
+    {
         $this->_jitter = $jitter;
         $this->_wrap_around = $wrap_around;
     }
 
-    public function generate() {
-        
-        $width = $this->_owner->imagesx();
-        $height = $this->_owner->imagesy();
+    public function generate()
+    {
+        $width = $this->_owner->getImageWidth();
+        $height = $this->_owner->getImageHeight();
+
+        $displacement = array();
         
         for ($y = 0; $y < $height; $y++) {
             for ($x = 0; $x < $width; $x++) {
@@ -46,7 +49,7 @@ class Jitter extends FxBase implements PluginInterface {
             }
         }
         $this->_owner->displace($displacement);
+
         return true;
     }
-
 }

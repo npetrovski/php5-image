@@ -3,19 +3,19 @@
 namespace Image\Fx;
 
 use Image\Canvas;
-use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
 
-class Canvassize extends FxBase implements PluginInterface {
-
+class Canvassize extends FxBase implements PluginInterface
+{
     private $_top;
     private $_right;
     private $_bottom;
     private $_left;
     private $_color;
 
-    public function __construct($top = 10, $right = 10, $bottom = 10, $left = 10, $color = "") {
+    public function __construct($top = 10, $right = 10, $bottom = 10, $left = 10, $color = '')
+    {
         $this->_top = $top;
         $this->_right = $right;
         $this->_bottom = $bottom;
@@ -23,9 +23,10 @@ class Canvassize extends FxBase implements PluginInterface {
         $this->_color = $color;
     }
 
-    public function generate() {
-        $width = $this->_owner->imagesx();
-        $height = $this->_owner->imagesy();
+    public function generate()
+    {
+        $width = $this->_owner->getImageWidth();
+        $height = $this->_owner->getImageHeight();
 
         $temp = new Canvas();
         if (!empty($this->_color)) {
@@ -33,7 +34,7 @@ class Canvassize extends FxBase implements PluginInterface {
                     ($this->_top + $this->_bottom));
             $arrColor = Color::hexColorToArrayColor($this->_color);
             $tempcolor = imagecolorallocate($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue']);
-            imagefilledrectangle($temp->image, 0, 0, $temp->imagesx(), $temp->imagesy(), $tempcolor);
+            imagefilledrectangle($temp->image, 0, 0, $temp->getImageWidth(), $temp->getImageHeight(), $tempcolor);
         } else {
             $temp->createImageTrueColorTransparent($width + ($this->_right + $this->_left), $height +
                     ($this->_top + $this->_bottom));
@@ -45,5 +46,4 @@ class Canvassize extends FxBase implements PluginInterface {
 
         return true;
     }
-
 }

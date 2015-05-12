@@ -2,11 +2,10 @@
 
 namespace Image\Draw;
 
-use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 
-class Primitive extends DrawBase implements PluginInterface {
-
+class Primitive extends DrawBase implements PluginInterface
+{
     const LINE = 'LINE';
     const RECTANGLE = 'RECTANGLE';
     const FILLED_RECTANGLE = 'FILLED_RECTANGLE';
@@ -15,21 +14,24 @@ class Primitive extends DrawBase implements PluginInterface {
     const SPIRAL = 'SPIRAL';
 
     private $__shapes = array();
-    private $__base_color = "000000";
+    private $__base_color = '000000';
     private $__base_alpha = 0;
 
-    public function __construct($base_color = "000000", $base_alpha = 0) {
+    public function __construct($base_color = '000000', $base_alpha = 0)
+    {
         $this->__base_color = $base_color;
         $this->__base_alpha = $base_alpha;
     }
 
-    public function line($x1, $y1, $x2, $y2, $color = null) {
+    public function line($x1, $y1, $x2, $y2, $color = null)
+    {
         $this->__shapes[] = array(self::LINE, $color, $x1, $y1, $x2, $y2);
 
         return $this;
     }
 
-    public function rectangle($x1, $y1, $x2, $y2, $color = null, $filled = false) {
+    public function rectangle($x1, $y1, $x2, $y2, $color = null, $filled = false)
+    {
         if (!$filled) {
             $this->__shapes[] = array(self::RECTANGLE, $color, $x1, $y1, $x2, $y2);
         } else {
@@ -39,13 +41,15 @@ class Primitive extends DrawBase implements PluginInterface {
         return $this;
     }
 
-    public function filledRectangle($x1, $y1, $x2, $y2, $color = null) {
+    public function filledRectangle($x1, $y1, $x2, $y2, $color = null)
+    {
         $this->__shapes[] = array(self::FILLED_RECTANGLE, $color, $x1, $y1, $x2, $y2);
 
         return $this;
     }
 
-    public function ellipse($x1, $y1, $x2, $y2, $color = null, $filled = false) {
+    public function ellipse($x1, $y1, $x2, $y2, $color = null, $filled = false)
+    {
         $w = $x2 - $x1;
         $h = $y2 - $y1;
         if (!$filled) {
@@ -57,26 +61,29 @@ class Primitive extends DrawBase implements PluginInterface {
         return $this;
     }
 
-    public function filledEllipse($x1, $y1, $x2, $y2, $color = null) {
+    public function filledEllipse($x1, $y1, $x2, $y2, $color = null)
+    {
         $this->__shapes[] = array(self::FILLED_ELLIPSE, $color, $x1, $y1, $x2 - $x1, $y2 - $y1);
 
         return $this;
     }
 
-    public function circle($x, $y, $radius, $color = null) {
+    public function circle($x, $y, $radius, $color = null)
+    {
         $this->__shapes[] = array(self::ELLIPSE, $color, $x, $y, $radius, $radius);
 
         return $this;
     }
 
-    public function spiral($x, $y, $radius, $angle, $color = null) {
+    public function spiral($x, $y, $radius, $angle, $color = null)
+    {
         $this->__shapes[] = array(self::SPIRAL, $color, $x, $y, $radius, $angle);
 
         return $this;
     }
 
-    public function generate() {
-
+    public function generate()
+    {
         foreach ($this->__shapes as $shape) {
             $type = array_shift($shape);
             $color = array_shift($shape);
@@ -112,5 +119,4 @@ class Primitive extends DrawBase implements PluginInterface {
             }
         }
     }
-
 }

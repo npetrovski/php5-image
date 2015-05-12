@@ -3,44 +3,51 @@
 namespace Image\Draw;
 
 use Image\Canvas;
-use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
 
-class Trueshadow extends DrawBase implements PluginInterface {
-
+class Trueshadow extends DrawBase implements PluginInterface
+{
     private $_distance;
     private $_color;
     private $_matrix;
-    
-    public function __construct($distance = 10, $color = "888888", $matrix = array(1, 2, 4, 4, 8, 8, 12, 12, 16, 16, 24, 32, 32, 24, 16, 16, 12, 12, 8, 8, 4, 4, 2, 1)) {
-        $this->setDistance($distance); 
+
+    public function __construct($distance = 10, $color = '888888', $matrix = array(1, 2, 4, 4, 8, 8, 12, 12, 16, 16, 24, 32, 32, 24, 16, 16, 12, 12, 8, 8, 4, 4, 2, 1))
+    {
+        $this->setDistance($distance);
         $this->setColor($color);
         $this->setMatrix($matrix);
     }
 
-    public function setDistance($distance = 10) {
+    public function setDistance($distance = 10)
+    {
         $this->_distance = $distance;
-        return $this;
-    }
-    
-    public function setColor($color = "888888") {
-        $this->_color = $color;
-        return $this;
-    }
-    
-    public function setMatrix($matrix = array(1, 2, 4, 4, 8, 8, 12, 12, 16, 16, 24, 32, 32, 24, 16, 16, 12, 12, 8, 8, 4, 4, 2, 1)) {
-        $this->_matrix = $matrix;
+
         return $this;
     }
 
-    public function generate() {
-        $width = $this->_owner->imagesx();
-        $height = $this->_owner->imagesy();
-        
+    public function setColor($color = '888888')
+    {
+        $this->_color = $color;
+
+        return $this;
+    }
+
+    public function setMatrix($matrix = array(1, 2, 4, 4, 8, 8, 12, 12, 16, 16, 24, 32, 32, 24, 16, 16, 12, 12, 8, 8, 4, 4, 2, 1))
+    {
+        $this->_matrix = $matrix;
+
+        return $this;
+    }
+
+    public function generate()
+    {
+        $width = $this->_owner->getImageWidth();
+        $height = $this->_owner->getImageHeight();
+
         $distance = $this->_distance;
         $matrix = $this->_matrix;
-        
+
         $matrix_width = count($matrix);
         $matrix_sum = array_sum($matrix);
 
@@ -48,9 +55,9 @@ class Trueshadow extends DrawBase implements PluginInterface {
         $temp = new Canvas();
         $temp->createImageTrueColorTransparent($width + ($matrix_width * 2), $height + ($matrix_width * 2));
         imagecopy($temp->image, $this->_owner->image, $matrix_width, $matrix_width, 0, 0, $width, $height);
-        
-        $w = $temp->imagesx();
-        $h = $temp->imagesy();
+
+        $w = $temp->getImageWidth();
+        $h = $temp->getImageHeight();
         for ($y = 0; $y < $h; $y++) {
             for ($x = 0; $x < $w; $x++) {
                 $t = $temp->imagecolorat($x, $y);
@@ -65,13 +72,13 @@ class Trueshadow extends DrawBase implements PluginInterface {
                 $p1[$x][$y]['a'] = 127;
             }
         }
-        $w = $this->_owner->imagesx();
-        $h = $this->_owner->imagesy();
+        $w = $this->_owner->getImageWidth();
+        $h = $this->_owner->getImageHeight();
         $d_offset = $distance - $matrix_width;
-        if ($this->_color != "image") {
+        if ($this->_color != 'image') {
             $arrColor = Color::hexColorToArrayColor($this->_color);
         }
-        
+
         $temp->createImageTrueColorTransparent($width + $distance + $m_offset, $height + $distance + $m_offset);
         imagesavealpha($temp->image, true);
         imagealphablending($temp->image, true);
@@ -107,7 +114,7 @@ class Trueshadow extends DrawBase implements PluginInterface {
                     $sumb += $p1[$i][$xy]['b'] * $matrix[$k];
                     $suma += $p1[$i][$xy]['a'] * $matrix[$k];
                 }
-                if ($this->_color != "image") {
+                if ($this->_color != 'image') {
                     $col = imagecolorallocatealpha($temp->image, $arrColor['red'], $arrColor['green'], $arrColor['blue'], ($suma / $matrix_sum));
                 } else {
                     $col = imagecolorallocatealpha($temp->image, ($sumr /
@@ -122,7 +129,7 @@ class Trueshadow extends DrawBase implements PluginInterface {
         imagecopy($temp->image, $this->_owner->image, 0, 0, 0, 0, $width, $height);
         $this->_owner->image = $temp->image;
         unset($temp);
+
         return true;
     }
-
 }

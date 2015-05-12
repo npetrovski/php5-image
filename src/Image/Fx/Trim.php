@@ -4,36 +4,35 @@ namespace Image\Fx;
 
 use Image\Canvas;
 use Image\Helper\Color;
-use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 
-class Trim extends FxBase implements PluginInterface {
-
+class Trim extends FxBase implements PluginInterface
+{
     private $_base;
-    
+
     private $_away = null;
-    
+
     private $_tolerance;
-    
+
     private $_feather;
-    
-    
-    public function __construct($base = null, $away = null, $tolerance = 0, $feather = 0) {
+
+    public function __construct($base = null, $away = null, $tolerance = 0, $feather = 0)
+    {
         $this->setTrim($base, $away, $tolerance, $feather);
     }
-    
-    public function setTrim($base = null, $away = null, $tolerance = 0, $feather = 0) {
+
+    public function setTrim($base = null, $away = null, $tolerance = 0, $feather = 0)
+    {
         $this->_base = $base;
         $this->_away = $away;
         $this->_tolerance = $tolerance;
-        $this->_feather = $feather; 
+        $this->_feather = $feather;
     }
 
-    public function generate() {
-
-
-        $width = $this->_owner->imagesx();
-        $height = $this->_owner->imagesy();
+    public function generate()
+    {
+        $width = $this->_owner->getImageWidth();
+        $height = $this->_owner->getImageHeight();
 
         // default values
         $checkTransparency = false;
@@ -49,7 +48,7 @@ class Trim extends FxBase implements PluginInterface {
         foreach ($this->_away as $key => $value) {
             $this->_away[$key] = strtolower($value);
         }
-        
+
         // define base color position
         switch (strtolower($this->_base)) {
             case 'transparent':
@@ -76,7 +75,12 @@ class Trim extends FxBase implements PluginInterface {
         // pick base color
         if ($checkTransparency) {
             // color will only be used to compare alpha channel
-            $color = array('red' => 255, 'green' => 255, 'blue' => 255, 'alpha' => 0);
+            $color = array(
+                'red' => 255, 
+                'green' => 255, 
+                'blue' => 255, 
+                'alpha' => 0
+            );
         } else {
             $color = Color::intColorToArrayColor($this->_owner->imageColorAt($base_x, $base_y));
         }
@@ -88,12 +92,10 @@ class Trim extends FxBase implements PluginInterface {
 
         // search upper part of image for colors to trim away
         if (in_array('top', $this->_away)) {
-
             for ($y = 0; $y < ceil($height / 2); $y++) {
                 for ($x = 0; $x < $width; $x++) {
-
                     $checkColor = Color::intColorToArrayColor($this->_owner->imageColorAt($x, $y));
-                    
+
                     if ($checkTransparency) {
                         $checkColor['red'] = $color['red'];
                         $checkColor['green'] = $color['green'];
@@ -110,12 +112,10 @@ class Trim extends FxBase implements PluginInterface {
 
         // search left part of image for colors to trim away
         if (in_array('left', $this->_away)) {
-
             for ($x = 0; $x < ceil($width / 2); $x++) {
                 for ($y = $top_y; $y < $height; $y++) {
-
                     $checkColor = Color::intColorToArrayColor($this->_owner->imageColorAt($x, $y));
-                    
+
                     if ($checkTransparency) {
                         $checkColor['red'] = $color['red'];
                         $checkColor['green'] = $color['green'];
@@ -132,13 +132,10 @@ class Trim extends FxBase implements PluginInterface {
 
         // search lower part of image for colors to trim away
         if (in_array('bottom', $this->_away)) {
-
             for ($y = ($height - 1); $y >= floor($height / 2) - 1; $y--) {
                 for ($x = $top_x; $x < $width; $x++) {
-
-
                     $checkColor = Color::intColorToArrayColor($this->_owner->imageColorAt($x, $y));
-                    
+
                     if ($checkTransparency) {
                         $checkColor['red'] = $color['red'];
                         $checkColor['green'] = $color['green'];
@@ -155,10 +152,8 @@ class Trim extends FxBase implements PluginInterface {
 
         // search right part of image for colors to trim away
         if (in_array('right', $this->_away)) {
-
             for ($x = ($width - 1); $x >= floor($width / 2) - 1; $x--) {
                 for ($y = $top_y; $y < $bottom_y; $y++) {
-
                     $checkColor = Color::intColorToArrayColor($this->_owner->imageColorAt($x, $y));
 
                     if ($checkTransparency) {
@@ -177,7 +172,7 @@ class Trim extends FxBase implements PluginInterface {
 
         $trimmed = new Canvas();
         $trimmed->createImageTrueColorTransparent($bottom_x - $top_x, $bottom_y - $top_y);
-        
+
         // Preserve transparency
         $transIndex = imagecolortransparent($this->_owner->image);
         if ($transIndex != -1) {
@@ -189,12 +184,11 @@ class Trim extends FxBase implements PluginInterface {
             imagealphablending($trimmed->image, false);
             imagesavealpha($trimmed->image, true);
         }
-        
+
         imagecopyresampled($trimmed->image, $this->_owner->image, 0, 0, $top_x, $top_y, ($bottom_x - $top_x), ($bottom_y - $top_y), ($bottom_x - $top_x), ($bottom_y - $top_y));
-        
+
         $this->_owner->image = $trimmed->image;
 
         return true;
     }
-
 }

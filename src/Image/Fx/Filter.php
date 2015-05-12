@@ -2,18 +2,13 @@
 
 namespace Image\Fx;
 
-use Image\Fx\FxBase;
-
 use Image\Plugin\PluginInterface;
 
-class Filter extends FxBase implements PluginInterface {
-
-    
+class Filter extends FxBase implements PluginInterface
+{
     private $_filter_args = array();
-    
+
     /**
-     *
-     *
      *  arg0
      *      IMG_FILTER_NEGATE: Reverses all colors of the image.
      *      IMG_FILTER_GRAYSCALE: Converts the image into grayscale.
@@ -44,19 +39,21 @@ class Filter extends FxBase implements PluginInterface {
      *
      *  arg4
      *      IMG_FILTER_COLORIZE: Alpha channel, A value between 0 and 127. 0 indicates completely opaque while 127 indicates completely transparent.
-     *
      */
-    public function __construct() {        
+    public function __construct()
+    {
         $this->_filter_args = func_get_args();
     }
 
-    public function generate() {
+    public function generate()
+    {
         if (count($this->_filter_args) > 0) {
             $args = $this->_filter_args;
             array_unshift($args, $this->_owner->image);
-            return call_user_func_array('imagefilter', $args);
-        } 
-        return false;  
-    }
 
+            return call_user_func_array('imagefilter', $args);
+        }
+
+        return false;
+    }
 }

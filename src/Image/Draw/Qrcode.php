@@ -2,16 +2,14 @@
 
 namespace Image\Draw;
 
-use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
 
-
-class Qrcode extends DrawBase implements PluginInterface {
+class Qrcode extends DrawBase implements PluginInterface
+{
     /**
-     * Encoding mode
+     * Encoding mode.
      */
-
     const QR_MODE_NL = -1;
 
     /**
@@ -35,11 +33,9 @@ class Qrcode extends DrawBase implements PluginInterface {
     const QR_MODE_KJ = 3;
 
     /**
-     * Encoding mode STRUCTURED (currently unsupported)
+     * Encoding mode STRUCTURED (currently unsupported).
      */
     const QR_MODE_ST = 4;
-
-
 
     /**
      * Error correction level L : About 7% or less errors can be corrected.
@@ -61,7 +57,6 @@ class Qrcode extends DrawBase implements PluginInterface {
      */
     const QR_ECLEVEL_H = 3;
 
-
     // Version. Size of QRcode is defined as version.
     // Version is from 1 to 40.
     // Version 1 is 21*21 matrix. And 4 modules increases whenever 1 version increases.
@@ -76,7 +71,6 @@ class Qrcode extends DrawBase implements PluginInterface {
      * Maximum matrix size for maximum version (version 40 is 177*177 matrix).
      */
     const QRSPEC_WIDTH_MAX = 177;
-
 
     /**
      * Matrix index to get width from $capacity array.
@@ -98,69 +92,65 @@ class Qrcode extends DrawBase implements PluginInterface {
      */
     const QRCAP_EC = 3;
 
-
     // Structure (currently usupported)
 
     /**
-     * Number of header bits for structured mode
+     * Number of header bits for structured mode.
      */
     const STRUCTURE_HEADER_BITS = 20;
 
     /**
-     * Max number of symbols for structured mode
+     * Max number of symbols for structured mode.
      */
     const MAX_STRUCTURED_SYMBOLS = 16;
 
     // Masks
 
     /**
-     * Down point base value for case 1 mask pattern (concatenation of same color in a line or a column)
+     * Down point base value for case 1 mask pattern (concatenation of same color in a line or a column).
      */
     const N1 = 3;
 
     /**
-     * Down point base value for case 2 mask pattern (module block of same color)
+     * Down point base value for case 2 mask pattern (module block of same color).
      */
     const N2 = 3;
 
     /**
-     * Down point base value for case 3 mask pattern (1:1:3:1:1(dark:bright:dark:bright:dark)pattern in a line or a column)
+     * Down point base value for case 3 mask pattern (1:1:3:1:1(dark:bright:dark:bright:dark)pattern in a line or a column).
      */
     const N3 = 40;
 
     /**
-     * Down point base value for case 4 mask pattern (ration of dark modules in whole)
+     * Down point base value for case 4 mask pattern (ration of dark modules in whole).
      */
     const N4 = 10;
 
-    
     // Optimization settings
 
     /**
-     * if true, estimates best mask (spec. default, but extremally slow; set to false to significant performance boost but (propably) worst quality code
+     * if true, estimates best mask (spec. default, but extremally slow; set to false to significant performance boost but (propably) worst quality code.
      */
     const QR_FIND_BEST_MASK = true;
 
     /**
-     * if false, checks all masks available, otherwise value tells count of masks need to be checked, mask id are got randomly
+     * if false, checks all masks available, otherwise value tells count of masks need to be checked, mask id are got randomly.
      */
     const QR_FIND_FROM_RANDOM = 2;
 
     /**
-     * when QR_FIND_BEST_MASK === false
+     * when QR_FIND_BEST_MASK === false.
      */
     const QR_DEFAULT_MASK = 2;
-    
 
     protected $margin = 4;
 
-    
     protected $text;
-    
+
     private $color = '000000';
 
-    public function __construct($text, $eclevel = 'L', $margin = 4) {
-
+    public function __construct($text, $eclevel = 'L', $margin = 4)
+    {
         $this->text = $text;
 
         // set error correction level
@@ -168,68 +158,75 @@ class Qrcode extends DrawBase implements PluginInterface {
         if ($this->level === false) {
             $this->level = self::QR_ECLEVEL_L;
         }
-        
+
         $this->margin = $margin;
     }
 
-
-    public function getLevel() {
+    public function getLevel()
+    {
         return $this->level;
     }
 
-    public function setLevel($level) {
+    public function setLevel($level)
+    {
         if (!is_numeric($level)) {
             $level = array_search($level, array('L', 'M', 'Q', 'H'));
         }
         $this->level = $level;
     }
 
-    public function getMargin() {
+    public function getMargin()
+    {
         return $this->margin;
     }
 
-    public function setMargin($margin) {
+    public function setMargin($margin)
+    {
         $this->margin = $margin;
     }
 
-    public function getText() {
+    public function getText()
+    {
         return $this->text;
     }
 
-    public function setText($text) {
+    public function setText($text)
+    {
         $this->text = $text;
     }
 
-    public function setColor($color = "000000") {
+    public function setColor($color = '000000')
+    {
         $this->color = $color;
+
         return $this;
     }
 
-    public function generate() {
-        $width = $this->_owner->imagesx();
-        $height = $this->_owner->imagesy();
+    public function generate()
+    {
+        $width = $this->_owner->getImageWidth();
+        $height = $this->_owner->getImageHeight();
 
         $barcode_array = array();
         if ((is_null($this->text)) || ($this->text == '\0') || ($this->text == '')) {
             return false;
         }
-        
-        
+
         if (($this->hint != self::QR_MODE_8B) && ($this->hint != self::QR_MODE_KJ)) {
             return false;
         }
-        
+
         if (($this->version < 0) || ($this->version > self::QRSPEC_VERSION_MAX)) {
             return false;
         }
-        
+
         $this->items = array();
-        
+
         $this->encodeString($this->text);
-        
+
         $qrTab = $this->binarize($this->data);
         $size = count($qrTab);
-        
+
         $barcode_array['num_rows'] = $size;
         $barcode_array['num_cols'] = $size;
         $barcode_array['bcode'] = array();
@@ -242,7 +239,7 @@ class Qrcode extends DrawBase implements PluginInterface {
         }
         $this->barcode_array = $barcode_array;
         ///
-        
+
 
         $frame = self::binarize($this->data);
 
@@ -253,9 +250,8 @@ class Qrcode extends DrawBase implements PluginInterface {
         return true;
     }
 
-    private function image($frame, $width = 200, $height = 200) {
-
-
+    private function image($frame, $width = 200, $height = 200)
+    {
         $h = count($frame);
         $w = strlen($frame[0]);
 
@@ -292,43 +288,36 @@ class Qrcode extends DrawBase implements PluginInterface {
 
     /**
      * @var barcode array to be returned which is readable by TCPDF
-     * @access protected
      */
     private $barcode_array = array();
 
     /**
      * @var QR code version. Size of QRcode is defined as version. Version is from 1 to 40. Version 1 is 21*21 matrix. And 4 modules increases whenever 1 version increases. So version 40 is 177*177 matrix.
-     * @access protected
      */
     private $version = 0;
 
     /**
      * @var Levels of error correction. See definitions for possible values.
-     * @access protected
      */
     private $level = self::QR_ECLEVEL_L;
 
     /**
      * @var Encoding mode
-     * @access protected
      */
     private $hint = self::QR_MODE_8B;
 
     /**
      * @var if true the input string will be converted to uppercase
-     * @access protected
      */
     private $casesensitive = true;
 
     /**
      * @var structured QR code (not supported yet)
-     * @access protected
      */
     private $structured = 0;
 
     /**
      * @var mask data
-     * @access protected
      */
     private $data;
 
@@ -336,37 +325,31 @@ class Qrcode extends DrawBase implements PluginInterface {
 
     /**
      * @var width
-     * @access protected
      */
     private $width;
 
     /**
      * @var frame
-     * @access protected
      */
     private $frame;
 
     /**
      * @var X position of bit
-     * @access protected
      */
     private $x;
 
     /**
      * @var Y position of bit
-     * @access protected
      */
     private $y;
 
     /**
      * @var direction
-     * @access protected
      */
     private $dir;
 
     /**
      * @var single bit
-     * @access protected
      */
     private $bit;
 
@@ -374,49 +357,41 @@ class Qrcode extends DrawBase implements PluginInterface {
 
     /**
      * @var data code
-     * @access protected
      */
     private $datacode = array();
 
     /**
      * @var error correction code
-     * @access protected
      */
     private $ecccode = array();
 
     /**
      * @var blocks
-     * @access protected
      */
     private $blocks;
 
     /**
      * @var Reed-Solomon blocks
-     * @access protected
      */
     private $rsblocks = array(); //of RSblock
 
     /**
      * @var counter
-     * @access protected
      */
     private $count;
 
     /**
      * @var data length
-     * @access protected
      */
     private $dataLength;
 
     /**
      * @var error correction length
-     * @access protected
      */
     private $eccLength;
 
     /**
      * @var b1
-     * @access protected
      */
     private $b1;
 
@@ -424,7 +399,6 @@ class Qrcode extends DrawBase implements PluginInterface {
 
     /**
      * @var run length
-     * @access protected
      */
     private $runLength = array();
 
@@ -432,13 +406,11 @@ class Qrcode extends DrawBase implements PluginInterface {
 
     /**
      * @var input data string
-     * @access protected
      */
     private $dataStr = '';
 
     /**
      * @var input items
-     * @access protected
      */
     private $items;
 
@@ -446,19 +418,16 @@ class Qrcode extends DrawBase implements PluginInterface {
 
     /**
      * @var Reed-Solomon items
-     * @access protected
      */
     private $rsitems = array();
 
     /**
      * @var array of frames
-     * @access protected
      */
     private $frames = array();
 
     /**
      * @var alphabet-numeric convesion table
-     * @access protected
      */
     private $anTable = array(
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //
@@ -468,13 +437,12 @@ class Qrcode extends DrawBase implements PluginInterface {
         -1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, //
         25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1, -1, -1, -1, //
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1  //
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  //
     );
 
     /**
      * @var array Table of the capacity of symbols
-     * See Table 1 (pp.13) and Table 12-16 (pp.30-36), JIS X0510:2004.
-     * @access protected
+     *            See Table 1 (pp.13) and Table 12-16 (pp.30-36), JIS X0510:2004.
      */
     private $capacity = array(
         array(0, 0, 0, array(0, 0, 0, 0)), //
@@ -517,24 +485,22 @@ class Qrcode extends DrawBase implements PluginInterface {
         array(165, 3196, 0, array(630, 1204, 1770, 2100)), //
         array(169, 3362, 0, array(660, 1260, 1860, 2220)), //
         array(173, 3532, 0, array(720, 1316, 1950, 2310)), //
-        array(177, 3706, 0, array(750, 1372, 2040, 2430))  // 40
+        array(177, 3706, 0, array(750, 1372, 2040, 2430)),  // 40
     );
 
     /**
      * @var array Length indicator
-     * @access protected
      */
     private $lengthTableBits = array(
         array(10, 12, 14),
         array(9, 11, 13),
         array(8, 16, 16),
-        array(8, 10, 12)
+        array(8, 10, 12),
     );
 
     /**
      * @var array Table of the error correction code (Reed-Solomon block)
-     * See Table 12-16 (pp.30-36), JIS X0510:2004.
-     * @access protected
+     *            See Table 12-16 (pp.30-36), JIS X0510:2004.
      */
     private $eccTable = array(
         array(array(0, 0), array(0, 0), array(0, 0), array(0, 0)), //
@@ -577,14 +543,13 @@ class Qrcode extends DrawBase implements PluginInterface {
         array(array(17, 4), array(29, 14), array(49, 10), array(24, 46)), //
         array(array(4, 18), array(13, 32), array(48, 14), array(42, 32)), //
         array(array(20, 4), array(40, 7), array(43, 22), array(10, 67)), //
-        array(array(19, 6), array(18, 31), array(34, 34), array(20, 61))  // 40
+        array(array(19, 6), array(18, 31), array(34, 34), array(20, 61)),  // 40
     );
 
     /**
      * @var array Positions of alignment patterns.
-     * This array includes only the second and the third position of the alignment patterns. Rest of them can be calculated from the distance between them.
-     * See Table 1 in Appendix E (pp.71) of JIS X0510:2004.
-     * @access protected
+     *            This array includes only the second and the third position of the alignment patterns. Rest of them can be calculated from the distance between them.
+     *            See Table 1 in Appendix E (pp.71) of JIS X0510:2004.
      */
     private $alignmentPattern = array(
         array(0, 0),
@@ -595,52 +560,54 @@ class Qrcode extends DrawBase implements PluginInterface {
         array(28, 50), array(26, 50), array(30, 54), array(28, 54), array(32, 58), // 21-25
         array(30, 58), array(34, 62), array(26, 50), array(30, 54), array(26, 52), // 26-30
         array(30, 56), array(34, 60), array(30, 58), array(34, 62), array(30, 54), // 31-35
-        array(24, 50), array(28, 54), array(32, 58), array(26, 54), array(30, 58)  // 35-40
+        array(24, 50), array(28, 54), array(32, 58), array(26, 54), array(30, 58),  // 35-40
     );
 
     /**
      * @var array Version information pattern (BCH coded).
-     * See Table 1 in Appendix D (pp.68) of JIS X0510:2004.
-     * size: [QRSPEC_VERSION_MAX - 6]
-     * @access protected
+     *            See Table 1 in Appendix D (pp.68) of JIS X0510:2004.
+     *            size: [QRSPEC_VERSION_MAX - 6]
      */
     private $versionPattern = array(
         0x07c94, 0x085bc, 0x09a99, 0x0a4d3, 0x0bbf6, 0x0c762, 0x0d847, 0x0e60d, //
         0x0f928, 0x10b78, 0x1145d, 0x12a17, 0x13532, 0x149a6, 0x15683, 0x168c9, //
         0x177ec, 0x18ec4, 0x191e1, 0x1afab, 0x1b08e, 0x1cc1a, 0x1d33f, 0x1ed75, //
         0x1f250, 0x209d5, 0x216f0, 0x228ba, 0x2379f, 0x24b0b, 0x2542e, 0x26a64, //
-        0x27541, 0x28c69
+        0x27541, 0x28c69,
     );
 
     /**
      * @var array Format information
-     * @access protected
      */
     private $formatInfo = array(
         array(0x77c4, 0x72f3, 0x7daa, 0x789d, 0x662f, 0x6318, 0x6c41, 0x6976), //
         array(0x5412, 0x5125, 0x5e7c, 0x5b4b, 0x45f9, 0x40ce, 0x4f97, 0x4aa0), //
         array(0x355f, 0x3068, 0x3f31, 0x3a06, 0x24b4, 0x2183, 0x2eda, 0x2bed), //
-        array(0x1689, 0x13be, 0x1ce7, 0x19d0, 0x0762, 0x0255, 0x0d0c, 0x083b)  //
+        array(0x1689, 0x13be, 0x1ce7, 0x19d0, 0x0762, 0x0255, 0x0d0c, 0x083b),  //
     );
 
     // -------------------------------------------------
     // -------------------------------------------------
 
     /**
-     * Returns a barcode array which is readable by TCPDF
+     * Returns a barcode array which is readable by TCPDF.
+     *
      * @return array barcode array readable by TCPDF;
-     * @access public
      */
-    public function getBarcodeArray() {
+    public function getBarcodeArray()
+    {
         return $this->barcode_array;
     }
 
     /**
-     * Convert the frame in binary form
+     * Convert the frame in binary form.
+     *
      * @param array $frame array to binarize
+     *
      * @return array frame in binary form
      */
-    private function binarize($frame) {
+    private function binarize($frame)
+    {
         $len = count($frame);
         // the frame is square (width = height)
         foreach ($frame as &$frameLine) {
@@ -648,34 +615,38 @@ class Qrcode extends DrawBase implements PluginInterface {
                 $frameLine[$i] = (ord($frameLine[$i]) & 1) ? '1' : '0';
             }
         }
+
         return $frame;
     }
 
     /**
-     * Encode the input string to QR code
+     * Encode the input string to QR code.
+     *
      * @param string $string input string to encode
      */
-    private function encodeString($string) {
+    private function encodeString($string)
+    {
         $this->dataStr = $string;
         if (!$this->casesensitive) {
             $this->toUpper();
         }
         $ret = $this->splitString();
         if ($ret < 0) {
-            return null;
+            return;
         }
         $this->encodeMask(-1);
     }
 
     /**
-     * Encode mask
+     * Encode mask.
+     *
      * @param int $mask masking mode
      */
-    private function encodeMask($mask) {
-
+    private function encodeMask($mask)
+    {
         $this->datacode = $this->getByteStream($this->items);
         if (is_null($this->datacode)) {
-            return null;
+            return;
         }
         $spec = $this->getEccSpec($this->version, $this->level, array(0, 0, 0, 0, 0));
         $this->b1 = $this->rsBlockNum1($spec);
@@ -685,7 +656,7 @@ class Qrcode extends DrawBase implements PluginInterface {
         $this->blocks = $this->rsBlockNum($spec);
         $ret = $this->init($spec);
         if ($ret < 0) {
-            return null;
+            return;
         }
         $this->count = 0;
         $this->width = $this->getWidth($this->version);
@@ -722,7 +693,7 @@ class Qrcode extends DrawBase implements PluginInterface {
             $masked = $this->makeMask($this->width, $this->frame, $mask, $this->level);
         }
         if ($masked == null) {
-            return null;
+            return;
         }
         $this->data = $masked;
     }
@@ -731,31 +702,39 @@ class Qrcode extends DrawBase implements PluginInterface {
     // FrameFiller
 
     /**
-     * Set frame value at specified position
-     * @param array $at x,y position
-     * @param int $val value of the character to set
+     * Set frame value at specified position.
+     *
+     * @param array $at  x,y position
+     * @param int   $val value of the character to set
      */
-    private function setFrameAt($at, $val) {
+    private function setFrameAt($at, $val)
+    {
         $this->frame[$at['y']][$at['x']] = chr($val);
     }
 
     /**
-     * Get frame value at specified position
+     * Get frame value at specified position.
+     *
      * @param array $at x,y position
+     *
      * @return value at specified position
      */
-    private function getFrameAt($at) {
+    private function getFrameAt($at)
+    {
         return ord($this->frame[$at['y']][$at['x']]);
     }
 
     /**
-     * Return the next frame position
+     * Return the next frame position.
+     *
      * @return array of x,y coordinates
      */
-    private function getNextPosition() {
+    private function getNextPosition()
+    {
         do {
             if ($this->bit == -1) {
                 $this->bit = 0;
+
                 return array('x' => $this->x, 'y' => $this->y);
             }
             $x = $this->x;
@@ -791,11 +770,12 @@ class Qrcode extends DrawBase implements PluginInterface {
                 }
             }
             if (($x < 0) || ($y < 0)) {
-                return null;
+                return;
             }
             $this->x = $x;
             $this->y = $y;
         } while (ord($this->frame[$y][$x]) & 0x80);
+
         return array('x' => $x, 'y' => $y);
     }
 
@@ -804,14 +784,16 @@ class Qrcode extends DrawBase implements PluginInterface {
 
     /**
      * Initialize code.
+     *
      * @param array $spec array of ECC specification
+     *
      * @return 0 in case of success, -1 in case of error
      */
-    private function init($spec) {
-        
+    private function init($spec)
+    {
         $dl = $this->rsDataCodes1($spec);
         $el = $this->rsEccCodes1($spec);
-        $rs = $this->init_rs(8, 0x11d, 0, 1, $el, 255 - $dl - $el);
+        $rs = $this->initRs(8, 0x11d, 0, 1, $el, 255 - $dl - $el);
         $blockNo = 0;
         $dataPos = 0;
         $eccPos = 0;
@@ -822,7 +804,7 @@ class Qrcode extends DrawBase implements PluginInterface {
             $this->rsblocks[$blockNo]['dataLength'] = $dl;
             $this->rsblocks[$blockNo]['data'] = array_slice($this->datacode, $dataPos);
             $this->rsblocks[$blockNo]['eccLength'] = $el;
-            $ecc = $this->encode_rs_char($rs, $this->rsblocks[$blockNo]['data'], $ecc);
+            $ecc = $this->encodeRsChar($rs, $this->rsblocks[$blockNo]['data'], $ecc);
             $this->rsblocks[$blockNo]['ecc'] = $ecc;
             $this->ecccode = array_merge(array_slice($this->ecccode, 0, $eccPos), $ecc);
             $dataPos += $dl;
@@ -834,7 +816,7 @@ class Qrcode extends DrawBase implements PluginInterface {
         }
         $dl = $this->rsDataCodes2($spec);
         $el = $this->rsEccCodes2($spec);
-        $rs = $this->init_rs(8, 0x11d, 0, 1, $el, 255 - $dl - $el);
+        $rs = $this->initRs(8, 0x11d, 0, 1, $el, 255 - $dl - $el);
         if ($rs == null) {
             return -1;
         }
@@ -845,22 +827,24 @@ class Qrcode extends DrawBase implements PluginInterface {
             $this->rsblocks[$blockNo]['dataLength'] = $dl;
             $this->rsblocks[$blockNo]['data'] = array_slice($this->datacode, $dataPos);
             $this->rsblocks[$blockNo]['eccLength'] = $el;
-            $ecc = $this->encode_rs_char($rs, $this->rsblocks[$blockNo]['data'], $ecc);
+            $ecc = $this->encodeRsChar($rs, $this->rsblocks[$blockNo]['data'], $ecc);
             $this->rsblocks[$blockNo]['ecc'] = $ecc;
             $this->ecccode = array_merge(array_slice($this->ecccode, 0, $eccPos), $ecc);
             $dataPos += $dl;
             $eccPos += $el;
             $blockNo++;
         }
-        
+
         return 0;
     }
 
     /**
      * Return Reed-Solomon block code.
+     *
      * @return array rsblocks
      */
-    private function getCode() {
+    private function getCode()
+    {
         if ($this->count < $this->dataLength) {
             $row = $this->count % $this->blocks;
             $col = $this->count / $this->blocks;
@@ -876,6 +860,7 @@ class Qrcode extends DrawBase implements PluginInterface {
             return 0;
         }
         $this->count++;
+
         return $ret;
     }
 
@@ -883,14 +868,17 @@ class Qrcode extends DrawBase implements PluginInterface {
     // QRmask
 
     /**
-     * Write Format Information on frame and returns the number of black bits
-     * @param int $width frame width
+     * Write Format Information on frame and returns the number of black bits.
+     *
+     * @param int   $width frame width
      * @param array $frame frame
-     * @param array $mask masking mode
-     * @param int $level error correction level
+     * @param array $mask  masking mode
+     * @param int   $level error correction level
+     *
      * @return int blacks
      */
-    private function writeFormatInformation($width, &$frame, $mask, $level) {
+    private function writeFormatInformation($width, &$frame, $mask, $level)
+    {
         $blacks = 0;
         $format = $this->getFormatInfo($mask, $level);
         for ($i = 0; $i < 8; ++$i) {
@@ -923,121 +911,153 @@ class Qrcode extends DrawBase implements PluginInterface {
             }
             $format = $format >> 1;
         }
+
         return $blacks;
     }
 
     /**
-     * mask0
+     * mask0.
+     *
      * @param int $x X position
      * @param int $y Y position
+     *
      * @return int mask
      */
-    private function mask0($x, $y) {
+    private function mask0($x, $y)
+    {
         return ($x + $y) & 1;
     }
 
     /**
-     * mask1
+     * mask1.
+     *
      * @param int $x X position
      * @param int $y Y position
+     *
      * @return int mask
      */
-    private function mask1($x, $y) {
+    private function mask1($x, $y)
+    {
         return ($y & 1);
     }
 
     /**
-     * mask2
+     * mask2.
+     *
      * @param int $x X position
      * @param int $y Y position
+     *
      * @return int mask
      */
-    private function mask2($x, $y) {
+    private function mask2($x, $y)
+    {
         return ($x % 3);
     }
 
     /**
-     * mask3
+     * mask3.
+     *
      * @param int $x X position
      * @param int $y Y position
+     *
      * @return int mask
      */
-    private function mask3($x, $y) {
+    private function mask3($x, $y)
+    {
         return ($x + $y) % 3;
     }
 
     /**
-     * mask4
+     * mask4.
+     *
      * @param int $x X position
      * @param int $y Y position
+     *
      * @return int mask
      */
-    private function mask4($x, $y) {
+    private function mask4($x, $y)
+    {
         return (((int) ($y / 2)) + ((int) ($x / 3))) & 1;
     }
 
     /**
-     * mask5
+     * mask5.
+     *
      * @param int $x X position
      * @param int $y Y position
+     *
      * @return int mask
      */
-    private function mask5($x, $y) {
+    private function mask5($x, $y)
+    {
         return (($x * $y) & 1) + ($x * $y) % 3;
     }
 
     /**
-     * mask6
+     * mask6.
+     *
      * @param int $x X position
      * @param int $y Y position
+     *
      * @return int mask
      */
-    private function mask6($x, $y) {
+    private function mask6($x, $y)
+    {
         return ((($x * $y) & 1) + ($x * $y) % 3) & 1;
     }
 
     /**
-     * mask7
+     * mask7.
+     *
      * @param int $x X position
      * @param int $y Y position
+     *
      * @return int mask
      */
-    private function mask7($x, $y) {
+    private function mask7($x, $y)
+    {
         return ((($x * $y) % 3) + (($x + $y) & 1)) & 1;
     }
 
     /**
-     * Return bitmask
-     * @param int $maskNo mask number
-     * @param int $width width
-     * @param array $frame frame
+     * Return bitmask.
+     *
+     * @param int   $maskNo mask number
+     * @param int   $width  width
+     * @param array $frame  frame
+     *
      * @return array bitmask
      */
-    private function generateMaskNo($maskNo, $width, $frame) {
+    private function generateMaskNo($maskNo, $width, $frame)
+    {
         $bitMask = array_fill(0, $width, array_fill(0, $width, 0));
         for ($y = 0; $y < $width; ++$y) {
             for ($x = 0; $x < $width; ++$x) {
                 if (ord($frame[$y][$x]) & 0x80) {
                     $bitMask[$y][$x] = 0;
                 } else {
-                    $maskFunc = call_user_func(array($this, 'mask' . $maskNo), $x, $y);
+                    $maskFunc = call_user_func(array($this, 'mask'.$maskNo), $x, $y);
                     $bitMask[$y][$x] = ($maskFunc == 0) ? 1 : 0;
                 }
             }
         }
+
         return $bitMask;
     }
 
     /**
-     * makeMaskNo
-     * @param int $maskNo
-     * @param int $width
-     * @param int $s
-     * @param int $d
-     * @param boolean $maskGenOnly
+     * makeMaskNo.
+     *
+     * @param int  $maskNo
+     * @param int  $width
+     * @param int  $s
+     * @param int  $d
+     * @param bool $maskGenOnly
+     *
      * @return int b
      */
-    private function makeMaskNo($maskNo, $width, $s, &$d, $maskGenOnly = false) {
+    private function makeMaskNo($maskNo, $width, $s, &$d, $maskGenOnly = false)
+    {
         $b = 0;
 
         $bitMask = $this->generateMaskNo($maskNo, $width, $s, $d);
@@ -1053,30 +1073,38 @@ class Qrcode extends DrawBase implements PluginInterface {
                 $b += (int) (ord($d[$y][$x]) & 1);
             }
         }
+
         return $b;
     }
 
     /**
-     * makeMask
-     * @param int $width
+     * makeMask.
+     *
+     * @param int   $width
      * @param array $frame
-     * @param int $maskNo
-     * @param int $level
+     * @param int   $maskNo
+     * @param int   $level
+     *
      * @return array mask
      */
-    private function makeMask($width, $frame, $maskNo, $level) {
+    private function makeMask($width, $frame, $maskNo, $level)
+    {
         $masked = array_fill(0, $width, str_repeat("\0", $width));
         $this->makeMaskNo($maskNo, $width, $frame, $masked);
         $this->writeFormatInformation($width, $masked, $maskNo, $level);
+
         return $masked;
     }
 
     /**
-     * calcN1N3
+     * calcN1N3.
+     *
      * @param int $length
+     *
      * @return int demerit
      */
-    private function calcN1N3($length) {
+    private function calcN1N3($length)
+    {
         $demerit = 0;
         for ($i = 0; $i < $length; ++$i) {
             if ($this->runLength[$i] >= 5) {
@@ -1095,16 +1123,20 @@ class Qrcode extends DrawBase implements PluginInterface {
                 }
             }
         }
+
         return $demerit;
     }
 
     /**
-     * evaluateSymbol
-     * @param int $width
+     * evaluateSymbol.
+     *
+     * @param int   $width
      * @param array $frame
+     *
      * @return int demerit
      */
-    private function evaluateSymbol($width, $frame) {
+    private function evaluateSymbol($width, $frame)
+    {
         $head = 0;
         $demerit = 0;
         for ($y = 0; $y < $width; ++$y) {
@@ -1156,17 +1188,21 @@ class Qrcode extends DrawBase implements PluginInterface {
             }
             $demerit += $this->calcN1N3($head + 1);
         }
+
         return $demerit;
     }
 
     /**
-     * mask
-     * @param int $width
+     * mask.
+     *
+     * @param int   $width
      * @param array $frame
-     * @param int $level
+     * @param int   $level
+     *
      * @return array best mask
      */
-    private function mask($width, $frame, $level) {
+    private function mask($width, $frame, $level)
+    {
         $minDemerit = PHP_INT_MAX;
         $bestMaskNum = 0;
         $bestMask = array();
@@ -1195,6 +1231,7 @@ class Qrcode extends DrawBase implements PluginInterface {
                 $bestMaskNum = $i;
             }
         }
+
         return $bestMask;
     }
 
@@ -1202,38 +1239,48 @@ class Qrcode extends DrawBase implements PluginInterface {
     // QRsplit
 
     /**
-     * Return true if the character at specified position is a number
+     * Return true if the character at specified position is a number.
+     *
      * @param string $str string
-     * @param int $pos characted position
-     * @return boolean true of false
+     * @param int    $pos characted position
+     *
+     * @return bool true of false
      */
-    private function isDigitAt($str, $pos) {
+    private function isDigitAt($str, $pos)
+    {
         if ($pos >= strlen($str)) {
             return false;
         }
+
         return ((ord($str[$pos]) >= ord('0')) && (ord($str[$pos]) <= ord('9')));
     }
 
     /**
-     * Return true if the character at specified position is an alphanumeric character
-     * 
+     * Return true if the character at specified position is an alphanumeric character.
+     *
      * @param string $str string
-     * @param int $pos characted position
-     * @return boolean true of false
+     * @param int    $pos characted position
+     *
+     * @return bool true of false
      */
-    private function isAlnumAt($str, $pos) {
+    private function isAlnumAt($str, $pos)
+    {
         if ($pos >= strlen($str)) {
             return false;
         }
+
         return ($this->lookAnTable(ord($str[$pos])) >= 0);
     }
 
     /**
-     * identifyMode
+     * identifyMode.
+     *
      * @param int $pos
+     *
      * @return int mode
      */
-    private function identifyMode($pos) {
+    private function identifyMode($pos)
+    {
         if ($pos >= strlen($this->dataStr)) {
             return self::QR_MODE_NL;
         }
@@ -1251,14 +1298,17 @@ class Qrcode extends DrawBase implements PluginInterface {
                 }
             }
         }
+
         return self::QR_MODE_8B;
     }
 
     /**
-     * eatNum
+     * eatNum.
+     *
      * @return int run
      */
-    private function eatNum() {
+    private function eatNum()
+    {
         $ln = $this->lengthIndicator(self::QR_MODE_NM, $this->version);
         $p = 0;
         while ($this->isDigitAt($this->dataStr, $p)) {
@@ -1281,14 +1331,17 @@ class Qrcode extends DrawBase implements PluginInterface {
             }
         }
         $this->items = $this->appendNewInputItem($this->items, self::QR_MODE_NM, $run, str_split($this->dataStr));
+
         return $run;
     }
 
     /**
-     * eatAn
+     * eatAn.
+     *
      * @return int run
      */
-    private function eatAn() {
+    private function eatAn()
+    {
         $la = $this->lengthIndicator(self::QR_MODE_AN, $this->version);
         $ln = $this->lengthIndicator(self::QR_MODE_NM, $this->version);
         $p = 0;
@@ -1318,27 +1371,33 @@ class Qrcode extends DrawBase implements PluginInterface {
             }
         }
         $this->items = $this->appendNewInputItem($this->items, self::QR_MODE_AN, $run, str_split($this->dataStr));
+
         return $run;
     }
 
     /**
-     * eatKanji
+     * eatKanji.
+     *
      * @return int run
      */
-    private function eatKanji() {
+    private function eatKanji()
+    {
         $p = 0;
         while ($this->identifyMode($p) == self::QR_MODE_KJ) {
             $p += 2;
         }
         $this->items = $this->appendNewInputItem($this->items, self::QR_MODE_KJ, $p, str_split($this->dataStr));
+
         return $run;
     }
 
     /**
-     * eat8
+     * eat8.
+     *
      * @return int run
      */
-    private function eat8() {
+    private function eat8()
+    {
         $la = $this->lengthIndicator(self::QR_MODE_AN, $this->version);
         $ln = $this->lengthIndicator(self::QR_MODE_NM, $this->version);
         $p = 1;
@@ -1378,13 +1437,15 @@ class Qrcode extends DrawBase implements PluginInterface {
         }
         $run = $p;
         $this->items = $this->appendNewInputItem($this->items, self::QR_MODE_8B, $run, str_split($this->dataStr));
+
         return $run;
     }
 
     /**
-     * splitString
+     * splitString.
      */
-    private function splitString() {
+    private function splitString()
+    {
         while (strlen($this->dataStr) > 0) {
             if ($this->dataStr == '') {
                 return 0;
@@ -1424,9 +1485,10 @@ class Qrcode extends DrawBase implements PluginInterface {
     }
 
     /**
-     * toUpper
+     * toUpper.
      */
-    private function toUpper() {
+    private function toUpper()
+    {
         $stringLen = strlen($this->dataStr);
         $p = 0;
         while ($p < $stringLen) {
@@ -1440,6 +1502,7 @@ class Qrcode extends DrawBase implements PluginInterface {
                 $p++;
             }
         }
+
         return $this->dataStr;
     }
 
@@ -1447,37 +1510,43 @@ class Qrcode extends DrawBase implements PluginInterface {
     // QRinputItem
 
     /**
-     * newInputItem
-     * @param int $mode
-     * @param int $size
+     * newInputItem.
+     *
+     * @param int   $mode
+     * @param int   $size
      * @param array $data
      * @param array $bstream
+     *
      * @return array input item
      */
-    private function newInputItem($mode, $size, $data, $bstream = null) {
+    private function newInputItem($mode, $size, $data, $bstream = null)
+    {
         $setData = array_slice($data, 0, $size);
         if (count($setData) < $size) {
             $setData = array_merge($setData, array_fill(0, ($size - count($setData)), 0));
         }
         if (!$this->check($mode, $size, $setData)) {
-            return null;
+            return;
         }
 
         return array(
             'mode' => $mode,
             'size' => $size,
             'data' => $setData,
-            'bstream' => $bstream
+            'bstream' => $bstream,
         );
     }
 
     /**
-     * encodeModeNum
+     * encodeModeNum.
+     *
      * @param array $inputitem
-     * @param int $version
+     * @param int   $version
+     *
      * @return array input item
      */
-    private function encodeModeNum($inputitem, $version) {
+    private function encodeModeNum($inputitem, $version)
+    {
         $words = (int) ($inputitem['size'] / 3);
         $inputitem['bstream'] = array();
         $val = 0x1;
@@ -1497,16 +1566,20 @@ class Qrcode extends DrawBase implements PluginInterface {
             $val += (ord($inputitem['data'][$words * 3 + 1]) - ord('0'));
             $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 7, $val);
         }
+
         return $inputitem;
     }
 
     /**
-     * encodeModeAn
+     * encodeModeAn.
+     *
      * @param array $inputitem
-     * @param int $version
+     * @param int   $version
+     *
      * @return array input item
      */
-    private function encodeModeAn($inputitem, $version) {
+    private function encodeModeAn($inputitem, $version)
+    {
         $words = (int) ($inputitem['size'] / 2);
         $inputitem['bstream'] = array();
         $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, 0x02);
@@ -1520,36 +1593,44 @@ class Qrcode extends DrawBase implements PluginInterface {
             $val = $this->lookAnTable(ord($inputitem['data'][($words * 2)]));
             $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 6, $val);
         }
+
         return $inputitem;
     }
 
     /**
-     * encodeMode8
+     * encodeMode8.
+     *
      * @param array $inputitem
-     * @param int $version
+     * @param int   $version
+     *
      * @return array input item
      */
-    private function encodeMode8($inputitem, $version) {
+    private function encodeMode8($inputitem, $version)
+    {
         $inputitem['bstream'] = array();
         $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, 0x4);
         $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator(self::QR_MODE_8B, $version), $inputitem['size']);
         for ($i = 0; $i < $inputitem['size']; ++$i) {
             $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 8, ord($inputitem['data'][$i]));
         }
+
         return $inputitem;
     }
 
     /**
-     * encodeModeKanji
+     * encodeModeKanji.
+     *
      * @param array $inputitem
-     * @param int $version
+     * @param int   $version
+     *
      * @return array input item
      */
-    private function encodeModeKanji($inputitem, $version) {
+    private function encodeModeKanji($inputitem, $version)
+    {
         $inputitem['bstream'] = array();
         $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, 0x8);
         $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], $this->lengthIndicator(self::QR_MODE_KJ, $version), (int) ($inputitem['size'] / 2));
-        for ($i = 0; $i < $inputitem['size']; $i+=2) {
+        for ($i = 0; $i < $inputitem['size']; $i += 2) {
             $val = (ord($inputitem['data'][$i]) << 8) | ord($inputitem['data'][$i + 1]);
             if ($val <= 0x9ffc) {
                 $val -= 0x8140;
@@ -1560,30 +1641,38 @@ class Qrcode extends DrawBase implements PluginInterface {
             $val = ($val & 0xff) + $h;
             $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 13, $val);
         }
+
         return $inputitem;
     }
 
     /**
-     * encodeModeStructure
+     * encodeModeStructure.
+     *
      * @param array $inputitem
+     *
      * @return array input item
      */
-    private function encodeModeStructure($inputitem) {
+    private function encodeModeStructure($inputitem)
+    {
         $inputitem['bstream'] = array();
         $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, 0x03);
         $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, ord($inputitem['data'][1]) - 1);
         $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 4, ord($inputitem['data'][0]) - 1);
         $inputitem['bstream'] = $this->appendNum($inputitem['bstream'], 8, ord($inputitem['data'][2]));
+
         return $inputitem;
     }
 
     /**
-     * encodeBitStream
+     * encodeBitStream.
+     *
      * @param array $inputitem
-     * @param int $version
+     * @param int   $version
+     *
      * @return array input item
      */
-    private function encodeBitStream($inputitem, $version) {
+    private function encodeBitStream($inputitem, $version)
+    {
         $inputitem['bstream'] = array();
         $words = $this->maximumWords($inputitem['mode'], $version);
         if ($inputitem['size'] > $words) {
@@ -1621,6 +1710,7 @@ class Qrcode extends DrawBase implements PluginInterface {
                     }
             }
         }
+
         return $inputitem;
     }
 
@@ -1630,46 +1720,56 @@ class Qrcode extends DrawBase implements PluginInterface {
     /**
      * Append data to an input object.
      * The data is copied and appended to the input object.
-     * @param array items input items
-     * @param int $mode encoding mode.
-     * @param int $size size of data (byte).
-     * @param array $data array of input data.
-     * @return items
      *
+     * @param array items input items
+     * @param int   $mode encoding mode.
+     * @param int   $size size of data (byte).
+     * @param array $data array of input data.
+     *
+     * @return items
      */
-    private function appendNewInputItem($items, $mode, $size, $data) {
+    private function appendNewInputItem($items, $mode, $size, $data)
+    {
         $items[] = $this->newInputItem($mode, $size, $data);
+
         return $items;
     }
 
     /**
-     * insertStructuredAppendHeader
+     * insertStructuredAppendHeader.
+     *
      * @param array $items
-     * @param int $size
-     * @param int $index
-     * @param int $parity
+     * @param int   $size
+     * @param int   $index
+     * @param int   $parity
+     *
      * @return array items
      */
-    private function insertStructuredAppendHeader($items, $size, $index, $parity) {
+    private function insertStructuredAppendHeader($items, $size, $index, $parity)
+    {
         if ($size > self::MAX_STRUCTURED_SYMBOLS) {
             return -1;
         }
         if (($index <= 0) || ($index > self::MAX_STRUCTURED_SYMBOLS)) {
             return -1;
         }
-        
+
         $buf = array($size, $index, $parity);
         $entry = $this->newInputItem(self::QR_MODE_ST, 3, $buf);
         array_unshift($items, $entry);
+
         return $items;
     }
 
     /**
-     * calcParity
+     * calcParity.
+     *
      * @param array $items
+     *
      * @return int parity
      */
-    private function calcParity($items) {
+    private function calcParity($items)
+    {
         $parity = 0;
         foreach ($items as $item) {
             if ($item['mode'] != self::QR_MODE_ST) {
@@ -1678,30 +1778,38 @@ class Qrcode extends DrawBase implements PluginInterface {
                 }
             }
         }
+
         return $parity;
     }
 
     /**
-     * checkModeNum
-     * @param int $size
+     * checkModeNum.
+     *
+     * @param int   $size
      * @param array $data
-     * @return boolean true or false
+     *
+     * @return bool true or false
      */
-    private function checkModeNum($size, $data) {
+    private function checkModeNum($size, $data)
+    {
         for ($i = 0; $i < $size; ++$i) {
             if ((ord($data[$i]) < ord('0')) || (ord($data[$i]) > ord('9'))) {
                 return false;
             }
         }
+
         return true;
     }
 
     /**
-     * estimateBitsModeNum
+     * estimateBitsModeNum.
+     *
      * @param int $size
+     *
      * @return int number of bits
      */
-    private function estimateBitsModeNum($size) {
+    private function estimateBitsModeNum($size)
+    {
         $w = (int) $size / 3;
         $bits = $w * 10;
         switch ($size - $w * 3) {
@@ -1717,92 +1825,117 @@ class Qrcode extends DrawBase implements PluginInterface {
                     break;
                 }
         }
+
         return $bits;
     }
 
     /**
      * Look up the alphabet-numeric convesion table (see JIS X0510:2004, pp.19).
+     *
      * @param int $c character value
+     *
      * @return value
      */
-    private function lookAnTable($c) {
+    private function lookAnTable($c)
+    {
         return (($c > 127) ? -1 : $this->anTable[$c]);
     }
 
     /**
-     * checkModeAn
-     * @param int $size
+     * checkModeAn.
+     *
+     * @param int   $size
      * @param array $data
-     * @return boolean true or false
+     *
+     * @return bool true or false
      */
-    private function checkModeAn($size, $data) {
+    private function checkModeAn($size, $data)
+    {
         for ($i = 0; $i < $size; ++$i) {
             if ($this->lookAnTable(ord($data[$i])) == -1) {
                 return false;
             }
         }
+
         return true;
     }
 
     /**
-     * estimateBitsModeAn
+     * estimateBitsModeAn.
+     *
      * @param int $size
+     *
      * @return int number of bits
      */
-    private function estimateBitsModeAn($size) {
+    private function estimateBitsModeAn($size)
+    {
         $w = (int) ($size / 2);
         $bits = $w * 11;
         if ($size & 1) {
             $bits += 6;
         }
+
         return $bits;
     }
 
     /**
-     * estimateBitsMode8
+     * estimateBitsMode8.
+     *
      * @param int $size
+     *
      * @return int number of bits
      */
-    private function estimateBitsMode8($size) {
+    private function estimateBitsMode8($size)
+    {
         return $size * 8;
     }
 
     /**
-     * estimateBitsModeKanji
+     * estimateBitsModeKanji.
+     *
      * @param int $size
+     *
      * @return int number of bits
      */
-    private function estimateBitsModeKanji($size) {
+    private function estimateBitsModeKanji($size)
+    {
         return (int) (($size / 2) * 13);
     }
 
     /**
-     * checkModeKanji
-     * @param int $size
+     * checkModeKanji.
+     *
+     * @param int   $size
      * @param array $data
-     * @return boolean true or false
+     *
+     * @return bool true or false
      */
-    private function checkModeKanji($size, $data) {
+    private function checkModeKanji($size, $data)
+    {
         if ($size & 1) {
             return false;
         }
-        for ($i = 0; $i < $size; $i+=2) {
+        for ($i = 0; $i < $size; $i += 2) {
             $val = (ord($data[$i]) << 8) | ord($data[$i + 1]);
             if (($val < 0x8140) || (($val > 0x9ffc) && ($val < 0xe040)) || ($val > 0xebbf)) {
                 return false;
             }
         }
+
         return true;
     }
 
     /**
      * Validate the input data.
+     *
      * @param int $mode encoding mode.
      * @param int $size size of data (byte).
      * @param array data data to validate
-     * @return boolean true in case of valid data, false otherwise
+     *
+     * @return bool true in case of valid data, false otherwise
      */
-    private function check($mode, $size, $data) {
+    private function check($mode, $size, $data)
+    {
         if ($size <= 0) {
             return false;
         }
@@ -1826,16 +1959,20 @@ class Qrcode extends DrawBase implements PluginInterface {
                     break;
                 }
         }
+
         return false;
     }
 
     /**
-     * estimateBitStreamSize
+     * estimateBitStreamSize.
+     *
      * @param array $items
-     * @param int $version
+     * @param int   $version
+     *
      * @return int bits
      */
-    private function estimateBitStreamSize($items, $version) {
+    private function estimateBitStreamSize($items, $version)
+    {
         $bits = 0;
         if ($version == 0) {
             $version = 1;
@@ -1870,15 +2007,19 @@ class Qrcode extends DrawBase implements PluginInterface {
             $num = (int) (($item['size'] + $m - 1) / $m);
             $bits += $num * (4 + $l);
         }
+
         return $bits;
     }
 
     /**
-     * estimateVersion
+     * estimateVersion.
+     *
      * @param array $items
+     *
      * @return int version
      */
-    private function estimateVersion($items) {
+    private function estimateVersion($items)
+    {
         $version = 0;
         $prev = 0;
         do {
@@ -1889,17 +2030,21 @@ class Qrcode extends DrawBase implements PluginInterface {
                 return -1;
             }
         } while ($version > $prev);
+
         return $version;
     }
 
     /**
-     * lengthOfCode
+     * lengthOfCode.
+     *
      * @param int $mode
      * @param int $version
      * @param int $bits
+     *
      * @return int size
      */
-    private function lengthOfCode($mode, $version, $bits) {
+    private function lengthOfCode($mode, $version, $bits)
+    {
         $payload = $bits - 4 - $this->lengthIndicator($mode, $version);
         switch ($mode) {
             case self::QR_MODE_NM: {
@@ -1946,30 +2091,38 @@ class Qrcode extends DrawBase implements PluginInterface {
         if ($size > $maxsize) {
             $size = $maxsize;
         }
+
         return $size;
     }
 
     /**
-     * createBitStream
+     * createBitStream.
+     *
      * @param array $items
+     *
      * @return array of items and total bits
      */
-    private function createBitStream($items) {
+    private function createBitStream($items)
+    {
         $total = 0;
         foreach ($items as $key => $item) {
             $items[$key] = $this->encodeBitStream($item, $this->version);
             $bits = count($items[$key]['bstream']);
             $total += $bits;
         }
+
         return array($items, $total);
     }
 
     /**
-     * convertData
+     * convertData.
+     *
      * @param array $items
+     *
      * @return array items
      */
-    private function convertData($items) {
+    private function convertData($items)
+    {
         $ver = $this->estimateVersion($items);
         if ($ver > $this->version) {
             $this->version = $ver;
@@ -1990,15 +2143,19 @@ class Qrcode extends DrawBase implements PluginInterface {
                 break;
             }
         }
+
         return $items;
     }
 
     /**
-     * Append Padding Bit to bitstream
+     * Append Padding Bit to bitstream.
+     *
      * @param array $bstream
+     *
      * @return array bitstream
      */
-    private function appendPaddingBit($bstream) {
+    private function appendPaddingBit($bstream)
+    {
         $bits = count($bstream);
         $maxwords = $this->getDataLength($this->version, $this->level);
         $maxbits = $maxwords * 8;
@@ -2020,40 +2177,53 @@ class Qrcode extends DrawBase implements PluginInterface {
             }
             $padding = $this->appendBytes($padding, $padlen, $padbuf);
         }
+
         return $this->appendBitstream($bstream, $padding);
     }
 
     /**
-     * mergeBitStream
+     * mergeBitStream.
+     *
      * @param array $bstream
+     *
      * @return array bitstream
      */
-    private function mergeBitStream($items) {
+    private function mergeBitStream($items)
+    {
         $items = $this->convertData($items);
         $bstream = array();
         foreach ($items as $item) {
             $bstream = $this->appendBitstream($bstream, $item['bstream']);
         }
+
         return $bstream;
     }
 
     /**
      * Returns a stream of bits.
+     *
      * @param int $items
+     *
      * @return array padded merged byte stream
      */
-    private function getBitStream($items) {
+    private function getBitStream($items)
+    {
         $bstream = $this->mergeBitStream($items);
+
         return $this->appendPaddingBit($bstream);
     }
 
     /**
      * Pack all bit streams padding bits into a byte array.
+     *
      * @param int $items
+     *
      * @return array padded merged byte stream
      */
-    private function getByteStream($items) {
+    private function getByteStream($items)
+    {
         $bstream = $this->getBitStream($items);
+
         return $this->bitstreamToByte($bstream);
     }
 
@@ -2061,21 +2231,27 @@ class Qrcode extends DrawBase implements PluginInterface {
     // QRbitstream
 
     /**
-     * Return an array with zeros
+     * Return an array with zeros.
+     *
      * @param int $setLength array size
+     *
      * @return array
      */
-    private function allocate($setLength) {
+    private function allocate($setLength)
+    {
         return array_fill(0, $setLength, 0);
     }
 
     /**
-     * Return new bitstream from number
+     * Return new bitstream from number.
+     *
      * @param int $bits number of bits
-     * @param int $num number
+     * @param int $num  number
+     *
      * @return array bitstream
      */
-    private function newFromNum($bits, $num) {
+    private function newFromNum($bits, $num)
+    {
         $bstream = $this->allocate($bits);
         $mask = 1 << ($bits - 1);
         for ($i = 0; $i < $bits; ++$i) {
@@ -2086,16 +2262,20 @@ class Qrcode extends DrawBase implements PluginInterface {
             }
             $mask = $mask >> 1;
         }
+
         return $bstream;
     }
 
     /**
-     * Return new bitstream from bytes
-     * @param int $size size
+     * Return new bitstream from bytes.
+     *
+     * @param int   $size size
      * @param array $data bytes
+     *
      * @return array bitstream
      */
-    private function newFromBytes($size, $data) {
+    private function newFromBytes($size, $data)
+    {
         $bstream = $this->allocate($size * 8);
         $p = 0;
         for ($i = 0; $i < $size; ++$i) {
@@ -2110,16 +2290,20 @@ class Qrcode extends DrawBase implements PluginInterface {
                 $mask = $mask >> 1;
             }
         }
+
         return $bstream;
     }
 
     /**
-     * Append one bitstream to another
+     * Append one bitstream to another.
+     *
      * @param array $bitstream original bitstream
-     * @param array $append bitstream to append
+     * @param array $append    bitstream to append
+     *
      * @return array bitstream
      */
-    private function appendBitstream($bitstream, $append) {
+    private function appendBitstream($bitstream, $append)
+    {
         if ((!is_array($append)) || (count($append) == 0)) {
             return $bitstream;
         }
@@ -2131,41 +2315,52 @@ class Qrcode extends DrawBase implements PluginInterface {
     }
 
     /**
-     * Append one bitstream created from number to another
+     * Append one bitstream created from number to another.
+     *
      * @param array $bitstream original bitstream
-     * @param int $bits number of bits
-     * @param int $num number
+     * @param int   $bits      number of bits
+     * @param int   $num       number
+     *
      * @return array bitstream
      */
-    private function appendNum($bitstream, $bits, $num) {
+    private function appendNum($bitstream, $bits, $num)
+    {
         if ($bits == 0) {
             return 0;
         }
         $b = $this->newFromNum($bits, $num);
+
         return $this->appendBitstream($bitstream, $b);
     }
 
     /**
-     * Append one bitstream created from bytes to another
+     * Append one bitstream created from bytes to another.
+     *
      * @param array $bitstream original bitstream
-     * @param int $size size
-     * @param array $data bytes
+     * @param int   $size      size
+     * @param array $data      bytes
+     *
      * @return array bitstream
      */
-    private function appendBytes($bitstream, $size, $data) {
+    private function appendBytes($bitstream, $size, $data)
+    {
         if ($size == 0) {
             return 0;
         }
         $b = $this->newFromBytes($size, $data);
+
         return $this->appendBitstream($bitstream, $b);
     }
 
     /**
-     * Convert bitstream to bytes
+     * Convert bitstream to bytes.
+     *
      * @param array $bitstream original bitstream
+     *
      * @return array of bytes
      */
-    private function bitstreamToByte($bstream) {
+    private function bitstreamToByte($bstream)
+    {
         $size = count($bstream);
         if ($size == 0) {
             return array();
@@ -2191,6 +2386,7 @@ class Qrcode extends DrawBase implements PluginInterface {
             }
             $data[$bytes] = $v;
         }
+
         return $data;
     }
 
@@ -2198,80 +2394,103 @@ class Qrcode extends DrawBase implements PluginInterface {
     // QRspec
 
     /**
-     * Replace a value on the array at the specified position
-     * @param array $srctab
-     * @param int $x X position
-     * @param int $y Y position
-     * @param string $repl value to replace
-     * @param int $replLen length of the repl string
+     * Replace a value on the array at the specified position.
+     *
+     * @param array  $srctab
+     * @param int    $x       X position
+     * @param int    $y       Y position
+     * @param string $repl    value to replace
+     * @param int    $replLen length of the repl string
+     *
      * @return array srctab
      */
-    private function qrstrset($srctab, $x, $y, $repl, $replLen = false) {
+    private function qrstrset($srctab, $x, $y, $repl, $replLen = false)
+    {
         $srctab[$y] = substr_replace($srctab[$y], ($replLen !== false) ? substr($repl, 0, $replLen) : $repl, $x, ($replLen !== false) ? $replLen : strlen($repl));
+
         return $srctab;
     }
 
     /**
      * Return maximum data code length (bytes) for the version.
+     *
      * @param int $version version
-     * @param int $level error correction level
+     * @param int $level   error correction level
+     *
      * @return int maximum size (bytes)
      */
-    private function getDataLength($version, $level) {
+    private function getDataLength($version, $level)
+    {
         return $this->capacity[$version][self::QRCAP_WORDS] - $this->capacity[$version][self::QRCAP_EC][$level];
     }
 
     /**
      * Return maximum error correction code length (bytes) for the version.
+     *
      * @param int $version version
-     * @param int $level error correction level
+     * @param int $level   error correction level
+     *
      * @return int ECC size (bytes)
      */
-    private function getECCLength($version, $level) {
+    private function getECCLength($version, $level)
+    {
         return $this->capacity[$version][self::QRCAP_EC][$level];
     }
 
     /**
      * Return the width of the symbol for the version.
+     *
      * @param int $version version
+     *
      * @return int width
      */
-    private function getWidth($version) {
+    private function getWidth($version)
+    {
         return $this->capacity[$version][self::QRCAP_WIDTH];
     }
 
     /**
      * Return the numer of remainder bits.
+     *
      * @param int $version version
+     *
      * @return int number of remainder bits
      */
-    private function getRemainder($version) {
+    private function getRemainder($version)
+    {
         return $this->capacity[$version][self::QRCAP_REMINDER];
     }
 
     /**
      * Return a version number that satisfies the input code length.
-     * @param int $size input code length (byte)
+     *
+     * @param int $size  input code length (byte)
      * @param int $level error correction level
+     *
      * @return int version number
      */
-    private function getMinimumVersion($size, $level) {
+    private function getMinimumVersion($size, $level)
+    {
         for ($i = 1; $i <= self::QRSPEC_VERSION_MAX; ++$i) {
             $words = $this->capacity[$i][self::QRCAP_WORDS] - $this->capacity[$i][self::QRCAP_EC][$level];
             if ($words >= $size) {
                 return $i;
             }
         }
+
         return -1;
     }
 
     /**
      * Return the size of length indicator for the mode and version.
-     * @param int $mode encoding mode
+     *
+     * @param int $mode    encoding mode
      * @param int $version version
+     *
      * @return int the size of the appropriate length indicator (bits).
      */
-    private function lengthIndicator($mode, $version) {
+    private function lengthIndicator($mode, $version)
+    {
         if ($mode == self::QR_MODE_ST) {
             return 0;
         }
@@ -2282,22 +2501,26 @@ class Qrcode extends DrawBase implements PluginInterface {
         } else {
             $l = 2;
         }
+
         return $this->lengthTableBits[$mode][$l];
     }
 
     /**
      * Return the maximum length for the mode and version.
-     * @param int $mode encoding mode
+     *
+     * @param int $mode    encoding mode
      * @param int $version version
+     *
      * @return int the maximum length (bytes)
      */
-    private function maximumWords($mode, $version) {
+    private function maximumWords($mode, $version)
+    {
         if ($mode == self::QR_MODE_ST) {
             return 3;
         }
         if ($version <= 9) {
             $l = 0;
-        } else if ($version <= 26) {
+        } elseif ($version <= 26) {
             $l = 1;
         } else {
             $l = 2;
@@ -2307,17 +2530,21 @@ class Qrcode extends DrawBase implements PluginInterface {
         if ($mode == self::QR_MODE_KJ) {
             $words *= 2; // the number of bytes is required
         }
+
         return $words;
     }
 
     /**
      * Return an array of ECC specification.
-     * @param int $version version
-     * @param int $level error correction level
-     * @param array $spec an array of ECC specification contains as following: {# of type1 blocks, # of data code, # of ecc code, # of type2 blocks, # of data code}
+     *
+     * @param int   $version version
+     * @param int   $level   error correction level
+     * @param array $spec    an array of ECC specification contains as following: {# of type1 blocks, # of data code, # of ecc code, # of type2 blocks, # of data code}
+     *
      * @return array spec
      */
-    private function getEccSpec($version, $level, $spec) {
+    private function getEccSpec($version, $level, $spec)
+    {
         if (count($spec) < 5) {
             $spec = array(0, 0, 0, 0, 0);
         }
@@ -2338,41 +2565,49 @@ class Qrcode extends DrawBase implements PluginInterface {
             $spec[3] = $b2;
             $spec[4] = $spec[1] + 1;
         }
+
         return $spec;
     }
 
     /**
      * Put an alignment marker.
+     *
      * @param array $frame frame
-     * @param int $width width
-     * @param int $ox X center coordinate of the pattern
-     * @param int $oy Y center coordinate of the pattern
+     * @param int   $width width
+     * @param int   $ox    X center coordinate of the pattern
+     * @param int   $oy    Y center coordinate of the pattern
+     *
      * @return array frame
      */
-    private function putAlignmentMarker($frame, $ox, $oy) {
+    private function putAlignmentMarker($frame, $ox, $oy)
+    {
         $finder = array(
             "\xa1\xa1\xa1\xa1\xa1",
             "\xa1\xa0\xa0\xa0\xa1",
             "\xa1\xa0\xa1\xa0\xa1",
             "\xa1\xa0\xa0\xa0\xa1",
-            "\xa1\xa1\xa1\xa1\xa1"
+            "\xa1\xa1\xa1\xa1\xa1",
         );
         $yStart = $oy - 2;
         $xStart = $ox - 2;
         for ($y = 0; $y < 5; $y++) {
             $frame = $this->qrstrset($frame, $xStart, $yStart + $y, $finder[$y]);
         }
+
         return $frame;
     }
 
     /**
      * Put an alignment pattern.
-     * @param int $version version
-     * @param array $fram frame
-     * @param int $width width
+     *
+     * @param int   $version version
+     * @param array $fram    frame
+     * @param int   $width   width
+     *
      * @return array frame
      */
-    private function putAlignmentPattern($version, $frame, $width) {
+    private function putAlignmentPattern($version, $frame, $width)
+    {
         if ($version < 2) {
             return $frame;
         }
@@ -2386,6 +2621,7 @@ class Qrcode extends DrawBase implements PluginInterface {
             $x = $this->alignmentPattern[$version][0];
             $y = $this->alignmentPattern[$version][0];
             $frame = $this->putAlignmentMarker($frame, $x, $y);
+
             return $frame;
         }
         $cx = $this->alignmentPattern[$version][0];
@@ -2404,46 +2640,58 @@ class Qrcode extends DrawBase implements PluginInterface {
             }
             $cy += $d;
         }
+
         return $frame;
     }
 
     /**
      * Return BCH encoded version information pattern that is used for the symbol of version 7 or greater. Use lower 18 bits.
+     *
      * @param int $version version
+     *
      * @return BCH encoded version information pattern
      */
-    private function getVersionPattern($version) {
+    private function getVersionPattern($version)
+    {
         if (($version < 7) || ($version > self::QRSPEC_VERSION_MAX)) {
             return 0;
         }
+
         return $this->versionPattern[($version - 7)];
     }
 
     /**
      * Return BCH encoded format information pattern.
+     *
      * @param array $mask
-     * @param int $level error correction level
+     * @param int   $level error correction level
+     *
      * @return BCH encoded format information pattern
      */
-    private function getFormatInfo($mask, $level) {
+    private function getFormatInfo($mask, $level)
+    {
         if (($mask < 0) || ($mask > 7)) {
             return 0;
         }
         if (($level < 0) || ($level > 3)) {
             return 0;
         }
+
         return $this->formatInfo[$level][$mask];
     }
 
     /**
      * Put a finder pattern.
+     *
      * @param array $frame frame
-     * @param int $width width
-     * @param int $ox X center coordinate of the pattern
-     * @param int $oy Y center coordinate of the pattern
+     * @param int   $width width
+     * @param int   $ox    X center coordinate of the pattern
+     * @param int   $oy    Y center coordinate of the pattern
+     *
      * @return array frame
      */
-    private function putFinderPattern($frame, $ox, $oy) {
+    private function putFinderPattern($frame, $ox, $oy)
+    {
         $finder = array(
             "\xc1\xc1\xc1\xc1\xc1\xc1\xc1",
             "\xc1\xc0\xc0\xc0\xc0\xc0\xc1",
@@ -2451,20 +2699,24 @@ class Qrcode extends DrawBase implements PluginInterface {
             "\xc1\xc0\xc1\xc1\xc1\xc0\xc1",
             "\xc1\xc0\xc1\xc1\xc1\xc0\xc1",
             "\xc1\xc0\xc0\xc0\xc0\xc0\xc1",
-            "\xc1\xc1\xc1\xc1\xc1\xc1\xc1"
+            "\xc1\xc1\xc1\xc1\xc1\xc1\xc1",
         );
         for ($y = 0; $y < 7; $y++) {
             $frame = $this->qrstrset($frame, $ox, ($oy + $y), $finder[$y]);
         }
+
         return $frame;
     }
 
     /**
      * Return a copy of initialized frame.
+     *
      * @param int $version version
+     *
      * @return Array of unsigned char.
      */
-    private function createFrame($version) {
+    private function createFrame($version)
+    {
         $width = $this->capacity[$version][self::QRCAP_WIDTH];
         $frameLine = str_repeat("\0", $width);
         $frame = array_fill(0, $width, $frameLine);
@@ -2521,105 +2773,137 @@ class Qrcode extends DrawBase implements PluginInterface {
         }
         // and a little bit...
         $frame[$width - 8][8] = "\x81";
+
         return $frame;
     }
 
     /**
      * Set new frame for the specified version.
+     *
      * @param int $version version
+     *
      * @return Array of unsigned char.
      */
-    private function newFrame($version) {
+    private function newFrame($version)
+    {
         if (($version < 1) || ($version > self::QRSPEC_VERSION_MAX)) {
-            return null;
+            return;
         }
         if (!isset($this->frames[$version])) {
             $this->frames[$version] = $this->createFrame($version);
         }
         if (is_null($this->frames[$version])) {
-            return null;
+            return;
         }
+
         return $this->frames[$version];
     }
 
     /**
-     * Return block number 0
+     * Return block number 0.
+     *
      * @param array $spec
+     *
      * @return int value
      */
-    private function rsBlockNum($spec) {
+    private function rsBlockNum($spec)
+    {
         return ($spec[0] + $spec[3]);
     }
 
     /**
-     * Return block number 1
+     * Return block number 1.
+     *
      * @param array $spec
+     *
      * @return int value
      */
-    private function rsBlockNum1($spec) {
+    private function rsBlockNum1($spec)
+    {
         return $spec[0];
     }
 
     /**
-     * Return data codes 1
+     * Return data codes 1.
+     *
      * @param array $spec
+     *
      * @return int value
      */
-    private function rsDataCodes1($spec) {
+    private function rsDataCodes1($spec)
+    {
         return $spec[1];
     }
 
     /**
-     * Return ecc codes 1
+     * Return ecc codes 1.
+     *
      * @param array $spec
+     *
      * @return int value
      */
-    private function rsEccCodes1($spec) {
+    private function rsEccCodes1($spec)
+    {
         return $spec[2];
     }
 
     /**
-     * Return block number 2
+     * Return block number 2.
+     *
      * @param array $spec
+     *
      * @return int value
      */
-    private function rsBlockNum2($spec) {
+    private function rsBlockNum2($spec)
+    {
         return $spec[3];
     }
 
     /**
-     * Return data codes 2
+     * Return data codes 2.
+     *
      * @param array $spec
+     *
      * @return int value
      */
-    private function rsDataCodes2($spec) {
+    private function rsDataCodes2($spec)
+    {
         return $spec[4];
     }
 
     /**
-     * Return ecc codes 2
+     * Return ecc codes 2.
+     *
      * @param array $spec
+     *
      * @return int value
      */
-    private function rsEccCodes2($spec) {
+    private function rsEccCodes2($spec)
+    {
         return $spec[2];
     }
 
     /**
-     * Return data length
+     * Return data length.
+     *
      * @param array $spec
+     *
      * @return int value
      */
-    private function rsDataLength($spec) {
+    private function rsDataLength($spec)
+    {
         return ($spec[0] * $spec[1]) + ($spec[3] * $spec[4]);
     }
 
     /**
-     * Return ecc length
+     * Return ecc length.
+     *
      * @param array $spec
+     *
      * @return int value
      */
-    private function rsEccLength($spec) {
+    private function rsEccLength($spec)
+    {
         return ($spec[0] + $spec[3]) * $spec[2];
     }
 
@@ -2627,24 +2911,29 @@ class Qrcode extends DrawBase implements PluginInterface {
     // QRrs
 
     /**
-     * Initialize a Reed-Solomon codec and add it to existing rsitems
+     * Initialize a Reed-Solomon codec and add it to existing rsitems.
+     *
      * @param int $symsize symbol size, bits
      * @param int $gfpoly  Field generator polynomial coefficients
-     * @param int $fcr  first root of RS code generator polynomial, index form
-     * @param int $prim  primitive element to generate polynomial roots
-     * @param int $nroots RS code generator polynomial degree (number of roots)
-     * @param int $pad  padding bytes at front of shortened block
+     * @param int $fcr     first root of RS code generator polynomial, index form
+     * @param int $prim    primitive element to generate polynomial roots
+     * @param int $nroots  RS code generator polynomial degree (number of roots)
+     * @param int $pad     padding bytes at front of shortened block
+     *
      * @return array Array of RS values:<ul><li>mm = Bits per symbol;</li><li>nn = Symbols per block;</li><li>alpha_to = log lookup table array;</li><li>index_of = Antilog lookup table array;</li><li>genpoly = Generator polynomial array;</li><li>nroots = Number of generator;</li><li>roots = number of parity symbols;</li><li>fcr = First consecutive root, index form;</li><li>prim = Primitive element, index form;</li><li>iprim = prim-th root of 1, index form;</li><li>pad = Padding bytes in shortened block;</li><li>gfpoly</ul>.
      */
-    private function init_rs($symsize, $gfpoly, $fcr, $prim, $nroots, $pad) {
+    private function initRs($symsize, $gfpoly, $fcr, $prim, $nroots, $pad)
+    {
         foreach ($this->rsitems as $rs) {
             if (($rs['pad'] != $pad) || ($rs['nroots'] != $nroots) || ($rs['mm'] != $symsize) || ($rs['gfpoly'] != $gfpoly) || ($rs['fcr'] != $fcr) || ($rs['prim'] != $prim)) {
                 continue;
             }
+
             return $rs;
         }
-        $rs = $this->init_rs_char($symsize, $gfpoly, $fcr, $prim, $nroots, $pad);
+        $rs = $this->initRsChar($symsize, $gfpoly, $fcr, $prim, $nroots, $pad);
         array_unshift($this->rsitems, $rs);
+
         return $rs;
     }
 
@@ -2652,30 +2941,37 @@ class Qrcode extends DrawBase implements PluginInterface {
     // QRrsItem
 
     /**
-     * modnn
+     * modnn.
+     *
      * @param array RS values
      * @param int $x X position
+     *
      * @return int X osition
      */
-    private function modnn($rs, $x) {
+    private function modnn($rs, $x)
+    {
         while ($x >= $rs['nn']) {
             $x -= $rs['nn'];
             $x = ($x >> $rs['mm']) + ($x & $rs['nn']);
         }
+
         return $x;
     }
 
     /**
      * Initialize a Reed-Solomon codec and returns an array of values.
+     *
      * @param int $symsize symbol size, bits
      * @param int $gfpoly  Field generator polynomial coefficients
-     * @param int $fcr  first root of RS code generator polynomial, index form
-     * @param int $prim  primitive element to generate polynomial roots
-     * @param int $nroots RS code generator polynomial degree (number of roots)
-     * @param int $pad  padding bytes at front of shortened block
+     * @param int $fcr     first root of RS code generator polynomial, index form
+     * @param int $prim    primitive element to generate polynomial roots
+     * @param int $nroots  RS code generator polynomial degree (number of roots)
+     * @param int $pad     padding bytes at front of shortened block
+     *
      * @return array Array of RS values:<ul><li>mm = Bits per symbol;</li><li>nn = Symbols per block;</li><li>alpha_to = log lookup table array;</li><li>index_of = Antilog lookup table array;</li><li>genpoly = Generator polynomial array;</li><li>nroots = Number of generator;</li><li>roots = number of parity symbols;</li><li>fcr = First consecutive root, index form;</li><li>prim = Primitive element, index form;</li><li>iprim = prim-th root of 1, index form;</li><li>pad = Padding bytes in shortened block;</li><li>gfpoly</ul>.
      */
-    private function init_rs_char($symsize, $gfpoly, $fcr, $prim, $nroots, $pad) {
+    private function initRsChar($symsize, $gfpoly, $fcr, $prim, $nroots, $pad)
+    {
         // Based on Reed solomon encoder by Phil Karn, KA9Q (GNU-LGPLv2)
         $rs = null;
         // Check parameter ranges
@@ -2701,8 +2997,8 @@ class Qrcode extends DrawBase implements PluginInterface {
         $rs['alpha_to'] = array_fill(0, ($rs['nn'] + 1), 0);
         $rs['index_of'] = array_fill(0, ($rs['nn'] + 1), 0);
         // PHP style macro replacement ;)
-        $NN = & $rs['nn'];
-        $A0 = & $NN;
+        $NN = &$rs['nn'];
+        $A0 = &$NN;
         // Generate Galois field lookup tables
         $rs['index_of'][0] = $A0; // log(zero) = -inf
         $rs['alpha_to'][$A0] = 0; // alpha**-inf = 0
@@ -2718,7 +3014,7 @@ class Qrcode extends DrawBase implements PluginInterface {
         }
         if ($sr != 1) {
             // field generator polynomial is not primitive!
-            return null;
+            return;
         }
         // Form RS code generator polynomial from its roots
         $rs['genpoly'] = array_fill(0, ($nroots + 1), 0);
@@ -2732,7 +3028,6 @@ class Qrcode extends DrawBase implements PluginInterface {
         }
         $rs['iprim'] = (int) ($iprim / $prim);
         $rs['genpoly'][0] = 1;
-
 
         for ($i = 0, $root = $fcr * $prim; $i < $nroots; $i++, $root += $prim) {
             $rs['genpoly'][$i + 1] = 1;
@@ -2751,28 +3046,32 @@ class Qrcode extends DrawBase implements PluginInterface {
         for ($i = 0; $i <= $nroots; ++$i) {
             $rs['genpoly'][$i] = $rs['index_of'][$rs['genpoly'][$i]];
         }
+
         return $rs;
     }
 
     /**
-     * Encode a Reed-Solomon codec and returns the parity array
-     * @param array $rs RS values
-     * @param array $data data
+     * Encode a Reed-Solomon codec and returns the parity array.
+     *
+     * @param array $rs     RS values
+     * @param array $data   data
      * @param array $parity parity
+     *
      * @return parity array
      */
-    private function encode_rs_char($rs, $data, $parity) {
-        $MM = & $rs['mm']; // bits per symbol
-        $NN = & $rs['nn']; // the total number of symbols in a RS block
-        $ALPHA_TO = & $rs['alpha_to']; // the address of an array of NN elements to convert Galois field elements in index (log) form to polynomial form
-        $INDEX_OF = & $rs['index_of']; // the address of an array of NN elements to convert Galois field elements in polynomial form to index (log) form
-        $GENPOLY = & $rs['genpoly']; // an array of NROOTS+1 elements containing the generator polynomial in index form
-        $NROOTS = & $rs['nroots']; // the number of roots in the RS code generator polynomial, which is the same as the number of parity symbols in a block
-        $FCR = & $rs['fcr']; // first consecutive root, index form
-        $PRIM = & $rs['prim']; // primitive element, index form
-        $IPRIM = & $rs['iprim']; // prim-th root of 1, index form
-        $PAD = & $rs['pad']; // the number of pad symbols in a block
-        $A0 = & $NN;
+    private function encodeRsChar($rs, $data, $parity)
+    {
+        $MM = &$rs['mm']; // bits per symbol
+        $NN = &$rs['nn']; // the total number of symbols in a RS block
+        $ALPHA_TO = &$rs['alpha_to']; // the address of an array of NN elements to convert Galois field elements in index (log) form to polynomial form
+        $INDEX_OF = &$rs['index_of']; // the address of an array of NN elements to convert Galois field elements in polynomial form to index (log) form
+        $GENPOLY = &$rs['genpoly']; // an array of NROOTS+1 elements containing the generator polynomial in index form
+        $NROOTS = &$rs['nroots']; // the number of roots in the RS code generator polynomial, which is the same as the number of parity symbols in a block
+        $FCR = &$rs['fcr']; // first consecutive root, index form
+        $PRIM = &$rs['prim']; // primitive element, index form
+        $IPRIM = &$rs['iprim']; // prim-th root of 1, index form
+        $PAD = &$rs['pad']; // the number of pad symbols in a block
+        $A0 = &$NN;
         $parity = array_fill(0, $NROOTS, 0);
         for ($i = 0; $i < ($NN - $NROOTS - $PAD); $i++) {
             $feedback = $INDEX_OF[$data[$i] ^ $parity[0]];
@@ -2793,6 +3092,7 @@ class Qrcode extends DrawBase implements PluginInterface {
                 array_push($parity, 0);
             }
         }
+
         return $parity;
     }
 

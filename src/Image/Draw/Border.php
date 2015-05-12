@@ -3,40 +3,46 @@
 namespace Image\Draw;
 
 use Image\Canvas;
-use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
 
-class Border extends DrawBase implements PluginInterface {
-
+class Border extends DrawBase implements PluginInterface
+{
     private $_padding;
     private $_color;
 
-    public function __construct($padding = 10, $color = "000000") {
+    public function __construct($padding = 10, $color = '000000')
+    {
         $this->_padding = $padding;
         $this->_color = $color;
     }
 
-    public function setBorder($padding = 10, $color = "000000") {
+    public function setBorder($padding = 10, $color = '000000')
+    {
         $this->_padding = $padding;
         $this->_color = $color;
+
         return $this;
     }
 
-    public function setPadding($padding = 10) {
+    public function setPadding($padding = 10)
+    {
         $this->_padding = $padding;
+
         return $this;
     }
 
-    public function setColor($color = "000000") {
+    public function setColor($color = '000000')
+    {
         $this->_color = $color;
+
         return $this;
     }
 
-    public function generate() {
-
-        $width = $this->_owner->imagesx();
-        $height = $this->_owner->imagesy();
+    public function generate()
+    {
+        $width = $this->_owner->getImageWidth();
+        $height = $this->_owner->getImageHeight();
 
         $padding = $this->_padding;
         $arrColor = Color::hexColorToArrayColor($this->_color);
@@ -49,7 +55,7 @@ class Border extends DrawBase implements PluginInterface {
 
         $this->_owner->image = $temp->image;
         unset($temp);
+
         return true;
     }
-
 }

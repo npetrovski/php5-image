@@ -3,52 +3,51 @@
 namespace Image\Draw;
 
 use Image\Canvas;
-use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 
-
-class Layer extends DrawBase implements PluginInterface {
-
-
+class Layer extends DrawBase implements PluginInterface
+{
     private $_preserveLayerSize = true;
-    
+
     private $_position_x = 0;
-    
+
     private $_position_y = 0;
-    
+
     private $_img_layer;
-    
-    public function __construct(Canvas $img = null, $x = 0, $y = 0, $preserveLayerSize = true) {
+
+    public function __construct(Canvas $img = null, $x = 0, $y = 0, $preserveLayerSize = true)
+    {
         $this->setLayer($img);
         $this->setPosition($x, $y, $preserveLayerSize);
     }
-    
-    public function setLayer(Canvas $img = null) {
+
+    public function setLayer(Canvas $img = null)
+    {
         $this->_img_layer = $img;
+
         return $this;
     }
-    
-    public function setPosition($x = 0, $y = 0, $preserveLayerSize = true) {
+
+    public function setPosition($x = 0, $y = 0, $preserveLayerSize = true)
+    {
         $this->_position_x = $x;
         $this->_position_y = $y;
-        
+
         $this->_preserveLayerSize = $preserveLayerSize;
-        
+
         return $this;
     }
-    
 
-    
-    public function generate() {
-        
+    public function generate()
+    {
         $this->_img_layer->apply();
-        
-        //getting the width and height of the body part image, (should be the same size as the canvas)
-        $layer_w = $this->_img_layer->imagesx();
-        $layer_h = $this->_img_layer->imagesy();
 
-        $width = $this->_owner->imagesx();
-        $height = $this->_owner->imagesy();
+        //getting the width and height of the body part image, (should be the same size as the canvas)
+        $layer_w = $this->_img_layer->getImageWidth();
+        $layer_h = $this->_img_layer->getImageHeight();
+
+        $width = $this->_owner->getImageWidth();
+        $height = $this->_owner->getImageHeight();
 
         //making sure that alpha blending is enabled
         imagealphablending($this->_owner->image, true);
@@ -66,5 +65,4 @@ class Layer extends DrawBase implements PluginInterface {
         //$this->_owner->image
         return true;
     }
-
 }

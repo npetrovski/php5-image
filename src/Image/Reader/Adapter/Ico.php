@@ -5,23 +5,23 @@ namespace Image\Reader\Adapter;
 use Image\Reader\ReaderAbstract;
 
 /**
- * Open ICO files and extract any size/depth to PNG format
+ * Open ICO files and extract any size/depth to PNG format.
  */
-class Ico extends ReaderAbstract {
-
+class Ico extends ReaderAbstract
+{
     /**
-     * Background color on icon extraction
+     * Background color on icon extraction.
      *
-     * @type array(R, G, B) = array(255, 255, 255)
-     * @var  public
+     * @var array(R, G, B) = array(255, 255, 255)
+     * @var public
      */
     private $__bgcolor = array(255, 255, 255);
 
     /**
      * Is background color transparent?
      *
-     * @type boolean = false
-     * @var  public
+     * @var bool   = false
+     * @var public
      */
     private $__bgcolor_transparent = true;
 
@@ -30,41 +30,46 @@ class Ico extends ReaderAbstract {
      * and return the binary data you can use this function
      * directly. Otherwise use LoadFile() instead.
      *
-     * @param   string   $data   Binary data of ICO file
-     * @return  boolean          Success
+     * @param string $data Binary data of ICO file
+     *
+     * @return bool Success
      */
-    private function __loadData($data) {
+    private function __loadData($data)
+    {
         $this->formats = array();
 
-        /**
+        /*
          * ICO header
          * */
-        $icodata = unpack("SReserved/SType/SCount", $data);
+        $icodata = unpack('SReserved/SType/SCount', $data);
         $this->ico = $icodata;
         $data = substr($data, 6);
 
-        /**
+        /*
          * Extract each icon header
          */
         for ($i = 0; $i < $this->ico['Count']; $i++) {
-            $icodata = unpack("CWidth/CHeight/CColorCount/CReserved/SPlanes/SBitCount/LSizeInBytes/LFileOffset", $data);
-            if (0 == $icodata['Width']) 
+            $icodata = unpack('CWidth/CHeight/CColorCount/CReserved/SPlanes/SBitCount/LSizeInBytes/LFileOffset', $data);
+            if (0 == $icodata['Width']) {
                 $icodata['Width'] = 256;
-            if (0 == $icodata['Height']) 
+            }
+            if (0 == $icodata['Height']) {
                 $icodata['Height'] = 256;
-            $icodata['FileOffset'] -= ( $this->ico['Count'] * 16) + 6;
-            if ($icodata['ColorCount'] == 0)
+            }
+            $icodata['FileOffset'] -= ($this->ico['Count'] * 16) + 6;
+            if ($icodata['ColorCount'] == 0) {
                 $icodata['ColorCount'] = 256;
+            }
             $this->formats[] = $icodata;
 
             $data = substr($data, 16);
         }
 
-        /**
+        /*
          * Extract aditional headers for each extracted icon header
          */
         for ($i = 0; $i < count($this->formats); $i++) {
-            $icodata = unpack("LSize/LWidth/LHeight/SPlanes/SBitCount/LCompression/LImageSize/LXpixelsPerM/LYpixelsPerM/LColorsUsed/LColorsImportant", substr($data, $this->formats[$i]['FileOffset']));
+            $icodata = unpack('LSize/LWidth/LHeight/SPlanes/SBitCount/LCompression/LImageSize/LXpixelsPerM/LYpixelsPerM/LColorsUsed/LColorsImportant', substr($data, $this->formats[$i]['FileOffset']));
 
             $this->formats[$i]['header'] = $icodata;
             $this->formats[$i]['colors'] = array();
@@ -86,7 +91,7 @@ class Ico extends ReaderAbstract {
                             'red' => ord($icodata[$offset]),
                             'green' => ord($icodata[$offset + 1]),
                             'blue' => ord($icodata[$offset + 2]),
-                            'reserved' => ord($icodata[$offset + 3])
+                            'reserved' => ord($icodata[$offset + 3]),
                         );
                         $offset += 4;
                     }
@@ -100,13 +105,13 @@ class Ico extends ReaderAbstract {
                         'blue' => ord($icodata[0]),
                         'green' => ord($icodata[1]),
                         'red' => ord($icodata[2]),
-                        'reserved' => ord($icodata[3])
+                        'reserved' => ord($icodata[3]),
                     );
                     $this->formats[$i]['colors'][] = array(
                         'blue' => ord($icodata[4]),
                         'green' => ord($icodata[5]),
                         'red' => ord($icodata[6]),
-                        'reserved' => ord($icodata[7])
+                        'reserved' => ord($icodata[7]),
                     );
 
                     $length = $this->formats[$i]['header']['Width'] * $this->formats[$i]['header']['Height'] / 8;
@@ -120,25 +125,29 @@ class Ico extends ReaderAbstract {
     }
 
     /**
-     * Return the total icons extracted at the moment
+     * Return the total icons extracted at the moment.
      *
-     * @return  integer   Total icons
+     * @return int Total icons
      */
-    public function TotalIcons() {
+    public function totalIcons()
+    {
         return count($this->formats);
     }
 
     /**
      * Ico::GetIconInfo()
-     * Return the icon header corresponding to that index
+     * Return the icon header corresponding to that index.
      *
-     * @param   integer   $index    Icon index
-     * @return  resource            Icon header
+     * @param int $index Icon index
+     *
+     * @return resource Icon header
      * */
-    public function GetIconInfo($index) {
+    public function getIconInfo($index)
+    {
         if (isset($this->formats[$index])) {
             return $this->formats[$index];
         }
+
         return false;
     }
 
@@ -147,41 +156,47 @@ class Ico extends ReaderAbstract {
      * the 3 color components or set $red = '#xxxxxx' (HTML format)
      * and leave all other blanks.
      *
-     * @param   optional   integer   $red     Red component
-     * @param   optional   integer   $green   Green component
-     * @param   optional   integer   $blue    Blue component
-     * @return             self
+     * @param optional   integer $red   Red component
+     * @param optional   integer $green Green component
+     * @param optional   integer $blue  Blue component
+     *
+     * @return self
      */
-    public function setBackground($red = 255, $green = 255, $blue = 255) {
+    public function setBackground($red = 255, $green = 255, $blue = 255)
+    {
         if (is_string($red) && preg_match('/^\#[0-9a-f]{6}$/', $red)) {
-            $green = hexdec($red[3] . $red[4]);
-            $blue = hexdec($red[5] . $red[6]);
-            $red = hexdec($red[1] . $red[2]);
+            $green = hexdec($red[3].$red[4]);
+            $blue = hexdec($red[5].$red[6]);
+            $red = hexdec($red[1].$red[2]);
         }
 
         $this->__bgcolor = array($red, $green, $blue);
+
         return $this;
     }
 
     /**
-     * Set background color to be saved as transparent
+     * Set background color to be saved as transparent.
      *
-     * @param   optional   boolean   $is_transparent   Is Transparent or not
-     * @return             boolean                     Is Transparent or not
+     * @param optional   boolean $is_transparent Is Transparent or not
+     *
+     * @return bool Is Transparent or not
      */
-    public function setBackgroundTransparent($is_transparent = true) {
+    public function setBackgroundTransparent($is_transparent = true)
+    {
         return ($this->__bgcolor_transparent = $is_transparent);
     }
 
     /**
-     * Return an image resource from file or URL
-     * 
+     * Return an image resource from file or URL.
+     *
      * @param string $filename
-     * @param integer $index   Position of the icon inside ICO
+     * @param int    $index    Position of the icon inside ICO
+     *
      * @return resource an image resource identifier on success, false on errors.
      */
-    public function getImage($filename, $index = 0) {
-
+    public function getImage($filename, $index = 0)
+    {
         if (($fp = @fopen($filename, 'rb')) !== false) {
             $data = '';
             while (!feof($fp)) {
@@ -206,12 +221,12 @@ class Ico extends ReaderAbstract {
             imagecolortransparent($im, $bgcolor);
         }
 
-        /**
+        /*
          * allocate pallete and get XOR image
          */
         if (in_array($this->formats[$index]['BitCount'], array(1, 4, 8, 24))) {
             if ($this->formats[$index]['BitCount'] != 24) {
-                /**
+                /*
                  * color pallete
                  */
                 $c = array();
@@ -220,12 +235,12 @@ class Ico extends ReaderAbstract {
                 }
             }
 
-            /**
+            /*
              * XOR image
              */
             $width = $this->formats[$index]['Width'];
             if (($width % 32) > 0) {
-                $width += ( 32 - ($this->formats[$index]['Width'] % 32));
+                $width += (32 - ($this->formats[$index]['Width'] % 32));
             }
             $offset = $this->formats[$index]['Width'] * $this->formats[$index]['Height'] * $this->formats[$index]['BitCount'] / 8;
             $total_bytes = ($width * $this->formats[$index]['Height']) / 8;
@@ -243,12 +258,12 @@ class Ico extends ReaderAbstract {
             }
         }
 
-        /**
-         * paint each pixel depending on bit count 
+        /*
+         * paint each pixel depending on bit count
          */
         switch ($this->formats[$index]['BitCount']) {
             case 32:
-                /**
+                /*
                  * 32 bits: 4 bytes per pixel [ B | G | R | ALPHA ]
                  */
                 $offset = 0;
@@ -264,7 +279,7 @@ class Ico extends ReaderAbstract {
                 }
                 break;
             case 24:
-                /**
+                /*
                  * 24 bits: 3 bytes per pixel [ B | G | R ]
                  */
                 $offset = 0;
@@ -282,7 +297,7 @@ class Ico extends ReaderAbstract {
                 }
                 break;
             case 8:
-                /**
+                /*
                  * 8 bits: 1 byte per pixel [ COLOR INDEX ]
                  */
                 $offset = 0;
@@ -297,7 +312,7 @@ class Ico extends ReaderAbstract {
                 }
                 break;
             case 4:
-                /**
+                /*
                  * 4 bits: half byte/nibble per pixel [ COLOR INDEX ]
                  */
                 $offset = 0;
@@ -309,7 +324,7 @@ class Ico extends ReaderAbstract {
                             $color = substr($this->formats[$index]['data'], $offset, 1);
                             $color = array(
                                 'High' => bindec(substr(decbin(ord($color)), 0, 4)),
-                                'Low' => bindec(substr(decbin(ord($color)), 4))
+                                'Low' => bindec(substr(decbin(ord($color)), 4)),
                             );
                             if ($bits[$maskoffset++] == 0) {
                                 imagesetpixel($im, $j, $i, $c[$color['High']]);
@@ -326,7 +341,7 @@ class Ico extends ReaderAbstract {
                 }
                 break;
             case 1:
-                /**
+                /*
                  * 1 bit: 1 bit per pixel (2 colors, usually black&white) [ COLOR INDEX ]
                  */
                 $colorbits = '';
@@ -358,20 +373,21 @@ class Ico extends ReaderAbstract {
      * returns the index to that color.
      * It supports alpha channel.
      *
-     * @param               resource    $im       Image resource
-     * @param               integer     $red      Red component
-     * @param               integer     $green    Green component
-     * @param               integer     $blue     Blue component
-     * @param   optional    integer     $alphpa   Alpha channel
-     * @return              integer               Color index
+     * @param resource            $im     Image resource
+     * @param int                 $red    Red component
+     * @param int                 $green  Green component
+     * @param int                 $blue   Blue component
+     * @param optional    integer $alphpa Alpha channel
+     *
+     * @return int Color index
      */
-    private function __allocateColor(&$im, $red, $green, $blue, $alpha = 0) {
+    private function __allocateColor(&$im, $red, $green, $blue, $alpha = 0)
+    {
         $c = imagecolorexactalpha($im, $red, $green, $blue, $alpha);
         if ($c >= 0) {
             return $c;
         }
+
         return imagecolorallocatealpha($im, $red, $green, $blue, $alpha);
     }
-
 }
-

@@ -3,50 +3,51 @@
 namespace Image\Fx;
 
 use Image\Canvas;
-use Image\Fx\FxBase;
 use Image\Plugin\PluginInterface;
 
-class Crop extends FxBase implements PluginInterface {
-
+class Crop extends FxBase implements PluginInterface
+{
     private $_crop_x;
     private $_crop_y;
 
-    public function __construct($crop_x = 0, $crop_y = 0) {
-        $this->setCrop($crop_x, $crop_y);
+    public function __construct($cropX = 0, $cropY = 0)
+    {
+        $this->setCrop($cropX, $cropY);
     }
 
-    public function setCrop($crop_x = 0, $crop_y = 0) {
-        $this->_crop_x = $crop_x;
-        $this->_crop_y = $crop_y;
+    public function setCrop($cropX = 0, $cropY = 0)
+    {
+        $this->_crop_x = $cropX;
+        $this->_crop_y = $cropY;
+
         return $this;
     }
 
-    public function generate() {
-
-        $canvas_x = $this->_owner->imagesx();
-        $canvas_y = $this->_owner->imagesy();
+    public function generate()
+    {
+        $width = $this->_owner->getImageWidth();
+        $height = $this->_owner->getImageHeight();
 
         //Calculate the cropping area
-        if ($this->_crop_x > 0 && $canvas_x > $this->_crop_x) {
-            $canvas_x = $this->_crop_x;
+        if ($this->_crop_x > 0 && $width > $this->_crop_x) {
+            $width = $this->_crop_x;
         }
 
-        if ($this->_crop_y > 0 && $canvas_y > $this->_crop_y) {
-            $canvas_y = $this->_crop_y;
+        if ($this->_crop_y > 0 && $height > $this->_crop_y) {
+            $height = $this->_crop_y;
         }
 
         $crop = new Canvas();
-        $crop->createImageTrueColorTransparent($canvas_x, $canvas_y);
+        $crop->createImageTrueColorTransparent($width, $height);
 
-        $src_x = $this->_owner->getHandleX() - floor($canvas_x / 2);
-        $src_y = $this->_owner->getHandleY() - floor($canvas_y / 2);
+        $src_width = $this->_owner->getHandleX() - floor($width / 2);
+        $src_height = $this->_owner->getHandleY() - floor($height / 2);
 
-        imagecopy($crop->image, $this->_owner->image, 0, 0, $src_x, $src_y, $canvas_x, $canvas_y);
+        imagecopy($crop->image, $this->_owner->image, 0, 0, $src_width, $src_height, $width, $height);
         $this->_owner->image = $crop->image;
 
         unset($crop);
 
         return true;
     }
-
 }

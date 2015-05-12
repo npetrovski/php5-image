@@ -3,12 +3,11 @@
 namespace Image\Draw;
 
 use Image\Canvas;
-use Image\Draw\DrawBase;
 use Image\Plugin\PluginInterface;
 use Image\Helper\Color;
 
-class Infobar extends DrawBase implements PluginInterface {
-
+class Infobar extends DrawBase implements PluginInterface
+{
     private $_info;
     private $_position;
     private $_justify;
@@ -16,8 +15,8 @@ class Infobar extends DrawBase implements PluginInterface {
     private $_textcolor;
     private $_font = 2;
 
-    public function __construct($info = "[Filename]", $position = "b", $justify = "c", $barcolor = "000000", $textcolor = "FFFFFF") {
-
+    public function __construct($info = '[Filename]', $position = 'b', $justify = 'c', $barcolor = '000000', $textcolor = 'FFFFFF')
+    {
         $this->setInfo($info);
         $this->setTextcolor($textcolor);
         $this->setBarcolor($barcolor);
@@ -25,46 +24,56 @@ class Infobar extends DrawBase implements PluginInterface {
         $this->setPosition($position);
     }
 
-    public function setInfo($info = "[Filename]") {
+    public function setInfo($info = '[Filename]')
+    {
         $this->_info = $info;
+
         return $this;
     }
 
-    public function setTextcolor($textcolor = "FFFFFF") {
+    public function setTextcolor($textcolor = 'FFFFFF')
+    {
         $this->_textcolor = $textcolor;
+
         return $this;
     }
 
-    public function setBarcolor($barcolor = "000000") {
+    public function setBarcolor($barcolor = '000000')
+    {
         $this->_barcolor = $barcolor;
+
         return $this;
     }
 
-    public function setJustify($justify = "c") {
+    public function setJustify($justify = 'c')
+    {
         $this->_justify = $justify;
+
         return $this;
     }
 
-    public function setPosition($position = "b") {
+    public function setPosition($position = 'b')
+    {
         $this->_position = $position;
 
         return $this;
     }
 
-    public function generate() {
-        $src_x = $this->_owner->imagesx();
-        $src_y = $this->_owner->imagesy();
+    public function generate()
+    {
+        $src_x = $this->_owner->getImageWidth();
+        $src_y = $this->_owner->getImageHeight();
         $temp = new Canvas();
         $temp->createImageTrueColorTransparent($src_x, $src_y + 20);
-        $text = str_replace("[Filename]", $this->_owner->getProperty('filename'), $this->_info);
+        $text = str_replace('[Filename]', $this->_owner->getProperty('filename'), $this->_info);
         switch ($this->_position) {
-            case "t":
+            case 't':
                 $x = 0;
                 $y = 20;
                 $bar_y = 0;
                 $text_y = 3;
                 break;
-            case "b":
+            case 'b':
                 $x = 0;
                 $y = 0;
                 $bar_y = $src_y + 20;
@@ -75,14 +84,14 @@ class Infobar extends DrawBase implements PluginInterface {
                 break;
         }
         switch ($this->_justify) {
-            case "l":
+            case 'l':
                 $text_x = 3;
                 break;
-            case "c":
+            case 'c':
                 $text_x = ($src_x - (imagefontwidth($this->_font) *
                         strlen($text))) / 2;
                 break;
-            case "r":
+            case 'r':
                 $text_x = $src_x - 3 - (imagefontwidth($this->_font) *
                         strlen($text));
                 break;
@@ -100,7 +109,7 @@ class Infobar extends DrawBase implements PluginInterface {
         imagestring($temp->image, $this->_font, $text_x, $text_y, $text, $text_color);
         $this->_owner->image = $temp->image;
         unset($temp);
+
         return true;
     }
-
 }

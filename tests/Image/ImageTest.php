@@ -9,8 +9,8 @@ class ImageTest extends PHPUnit_Framework_TestCase {
         
         $clone = clone $image;
         
-        $this->assertEquals($image->imagesx(), $clone->imagesx());
-        $this->assertEquals($image->imagesy(), $clone->imagesy());
+        $this->assertEquals($image->getImageWidth(), $clone->getImageWidth());
+        $this->assertEquals($image->getImageHeight(), $clone->getImageHeight());
 
     }
 
