@@ -254,6 +254,7 @@ BLACKPNG;
 
             if ('resource' != gettype($this->image)) {
                 unset($this->image);
+                throw new ImageException('File is not an image');
             }
 
             $this->_getFileInfo($filename);
