@@ -16,7 +16,6 @@ set_include_path(join(PATH_SEPARATOR, array(
 // set up an autoload for Zend / Pear style class loading
 spl_autoload_register(function ($class) {
     if (0 === strpos($class, 'Image')) {
-        $class = str_replace('\\', '/', $class);
-        require($class . '.php');
+        require_once str_replace('\\', '/', $class) . '.php';
     }
-});
+}, true, true);
