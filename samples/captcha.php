@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../autoload.php';
+require_once dirname(__FILE__) . '/../_autoload.php';
 
 $image = new Image\Canvas();
 $image->createImageTrueColor(206, 96, "FF0000");

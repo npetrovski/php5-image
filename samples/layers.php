@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../autoload.php';
+require_once dirname(__FILE__) . '/../_autoload.php';
 
 $image = new Image\Canvas(dirname(__FILE__) . '/source/rose.jpg');
 $layer = new Image\Canvas(dirname(__FILE__) . '/source/cherry.png');
