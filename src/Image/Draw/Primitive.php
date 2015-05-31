@@ -118,5 +118,7 @@ class Primitive extends DrawBase implements PluginInterface
                     break;
             }
         }
+        
+        return true;
     }
 }

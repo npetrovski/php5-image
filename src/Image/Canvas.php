@@ -10,8 +10,8 @@ use Image\Draw\DrawBase;
 use Image\Helper\HelperBase;
 use Image\Exception as ImageException;
 
-class Canvas
-{
+class Canvas {
+
     /**
      * Black PNG.
      *
@@ -57,8 +57,7 @@ BLACKPNG;
     /**
      * Constructor.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $args = func_get_args();
 
         switch (count($args)) {
@@ -78,8 +77,7 @@ BLACKPNG;
     /**
      * Plugins access.
      */
-    public function __call($name, $arguments)
-    {
+    public function __call($name, $arguments) {
         foreach ($this->_plugins as $row) {
             if ($row['plugin'] instanceof PluginInterface && method_exists($row['plugin'], $name)) {
                 return call_user_func_array(array($row['plugin'], $name), $arguments);
@@ -94,8 +92,7 @@ BLACKPNG;
      *
      * @return string
      */
-    public function attach(PluginInterface $plugin)
-    {
+    public function attach(PluginInterface $plugin) {
         $id = spl_object_hash($plugin);
         $plugin->attachToOwner($this);
 
@@ -111,8 +108,7 @@ BLACKPNG;
      *
      * @throws ImageException
      */
-    public function fx()
-    {
+    public function fx() {
         $args = func_get_args();
         $obj = FxBase::factory(array_shift($args), $args);
         if (!($obj instanceof PluginInterface)) {
@@ -130,8 +126,7 @@ BLACKPNG;
      *
      * @throws ImageException
      */
-    public function draw()
-    {
+    public function draw() {
         $args = func_get_args();
         $obj = DrawBase::factory(array_shift($args), $args);
         if (!($obj instanceof PluginInterface)) {
@@ -149,8 +144,7 @@ BLACKPNG;
      *
      * @throws ImageException
      */
-    public function helper()
-    {
+    public function helper() {
         $args = func_get_args();
         $obj = HelperBase::factory(array_shift($args), $args);
         if (!($obj instanceof PluginInterface)) {
@@ -166,8 +160,7 @@ BLACKPNG;
      *
      * @return \Image\Canvas
      */
-    public function apply()
-    {
+    public function apply() {
         foreach ($this->_plugins as $id => $row) {
             if ($row['plugin'] instanceof PluginInterface && !$row['applied']) {
                 $row['plugin']->generate();
@@ -187,8 +180,7 @@ BLACKPNG;
      *
      * @return \Image\Canvas
      */
-    public function createImage($width = 100, $height = 100, $color = 'FFFFFF')
-    {
+    public function createImage($width = 100, $height = 100, $color = 'FFFFFF') {
         $this->image = imagecreate($width, $height);
         if (!empty($color)) {
             $this->imagefill(0, 0, $color);
@@ -206,8 +198,7 @@ BLACKPNG;
      *
      * @return \Image\Canvas
      */
-    public function createImageTrueColor($width = 100, $height = 100, $color = 'FFFFFF', $alpha = null)
-    {
+    public function createImageTrueColor($width = 100, $height = 100, $color = 'FFFFFF', $alpha = null) {
         $this->image = imagecreatetruecolor($width, $height);
         if (!empty($color)) {
             $this->imagefill(0, 0, $color, $alpha);
@@ -224,8 +215,7 @@ BLACKPNG;
      *
      * @return \Image\Canvas
      */
-    public function createImageTrueColorTransparent($x = 100, $y = 100)
-    {
+    public function createImageTrueColorTransparent($x = 100, $y = 100) {
         $this->image = imagecreatetruecolor($x, $y);
         $blank = imagecreatefromstring(base64_decode(self::$_blackpng));
         imagesavealpha($this->image, true);
@@ -245,8 +235,7 @@ BLACKPNG;
      *
      * @throws ImageException
      */
-    public function openImage($filename)
-    {
+    public function openImage($filename) {
         if ($filename && file_exists($filename)) {
             $reader = new DefaultReader();
 
@@ -273,21 +262,20 @@ BLACKPNG;
      *
      * @return binary
      */
-    public function printImage($type, $filename = '')
-    {
+    public function printImage($type, $filename = '') {
         $this->apply();
 
-        $gd_function = 'image'.strtolower($type);
+        $gd_function = 'image' . strtolower($type);
         if (function_exists($gd_function)) {
             if (!empty($filename)) {
                 return call_user_func($gd_function, $this->image, $filename);
             } else {
-                header('Content-type: '.image_type_to_mime_type(constant('IMAGETYPE_'.strtoupper($type))));
+                header('Content-Type: ' . image_type_to_mime_type(constant('IMAGETYPE_' . strtoupper($type))));
 
                 return call_user_func($gd_function, $this->image);
             }
         } else {
-            throw new ImageException('Image type \''.$type.'\' is not supported.');
+            throw new ImageException('Image type \'' . $type . '\' is not supported.');
         }
     }
 
@@ -298,8 +286,7 @@ BLACKPNG;
      *
      * @return binary
      */
-    public function imagePng($filename = '')
-    {
+    public function imagePng($filename = '') {
         return $this->printImage('png', $filename);
     }
 
@@ -310,8 +297,7 @@ BLACKPNG;
      *
      * @return binary
      */
-    public function imageJpeg($filename = '')
-    {
+    public function imageJpeg($filename = '') {
         return $this->printImage('jpeg', $filename);
     }
 
@@ -322,8 +308,7 @@ BLACKPNG;
      *
      * @return binary
      */
-    public function imageWbmp($filename = '')
-    {
+    public function imageWbmp($filename = '') {
         return $this->printImage('wbmp', $filename);
     }
 
@@ -334,8 +319,7 @@ BLACKPNG;
      *
      * @return binary
      */
-    public function imageGif($filename = '')
-    {
+    public function imageGif($filename = '') {
         return $this->printImage('gif', $filename);
     }
 
@@ -344,8 +328,7 @@ BLACKPNG;
      *
      * @return \Image\Canvas
      */
-    public function destroyImage()
-    {
+    public function destroyImage() {
         imagedestroy($this->image);
         unset($this->image);
 
@@ -357,8 +340,7 @@ BLACKPNG;
      *
      * @return int
      */
-    public function getImageWidth()
-    {
+    public function getImageWidth() {
         return imagesx($this->image);
     }
 
@@ -367,8 +349,7 @@ BLACKPNG;
      *
      * @return int
      */
-    public function getImageHeight()
-    {
+    public function getImageHeight() {
         return imagesy($this->image);
     }
 
@@ -377,8 +358,7 @@ BLACKPNG;
      *
      * @return bool
      */
-    public function imageIsTrueColor()
-    {
+    public function imageIsTrueColor() {
         return imageistruecolor($this->image);
     }
 
@@ -390,8 +370,7 @@ BLACKPNG;
      *
      * @return int
      */
-    public function imageColorAt($x = 0, $y = 0)
-    {
+    public function imageColorAt($x = 0, $y = 0) {
         $color = imagecolorat($this->image, $x, $y);
         if (!$this->imageIsTrueColor()) {
             $arrColor = imagecolorsforindex($this->image, $color);
@@ -412,8 +391,7 @@ BLACKPNG;
      *
      * @return \Image\Canvas
      */
-    public function imagefill($x = 0, $y = 0, $color = 'FFFFFF', $alpha = null)
-    {
+    public function imagefill($x = 0, $y = 0, $color = 'FFFFFF', $alpha = null) {
         imagefill($this->image, $x, $y, $this->imagecolorallocate($color, $alpha));
 
         return $this;
@@ -427,8 +405,7 @@ BLACKPNG;
      *
      * @return int
      */
-    public function imagecolorallocate($color = 'FFFFFF', $alpha = null)
-    {
+    public function imagecolorallocate($color = 'FFFFFF', $alpha = null) {
         if (is_string($color)) {
             $arrColor = Color::hexColorToArrayColor($color);
         } elseif (is_int($color)) {
@@ -450,15 +427,16 @@ BLACKPNG;
      *
      * @return \Image\Canvas
      */
-    public function displace($map)
-    {
+    public function displace($map) {
         $width = $this->getImageWidth();
         $height = $this->getImageHeight();
         $temp = new self($width, $height);
         for ($y = 0; $y < $height; $y++) {
             for ($x = 0; $x < $width; $x++) {
-                $rgb = $this->imageColorAt($map['x'][$x][$y], $map['y'][$x][$y]);
-                imagesetpixel($temp->image, $x, $y, $this->imagecolorallocate($rgb));
+                if (isset($map['x'][$x][$y]) && isset($map['y'][$x][$y])) {
+                    $rgb = $this->imageColorAt($map['x'][$x][$y], $map['y'][$x][$y]);
+                    imagesetpixel($temp->image, $x, $y, $this->imagecolorallocate($rgb));
+                }
             }
         }
         $this->image = $temp->image;
@@ -471,8 +449,7 @@ BLACKPNG;
      *
      * @return int
      */
-    public function getHandleX()
-    {
+    public function getHandleX() {
         return ($this->mid_handle == true) ? floor($this->getImageWidth() / 2) : 0;
     }
 
@@ -481,8 +458,7 @@ BLACKPNG;
      *
      * @return int
      */
-    public function getHandleY()
-    {
+    public function getHandleY() {
         return ($this->mid_handle == true) ? floor($this->getImageHeight() / 2) : 0;
     }
 
@@ -493,8 +469,7 @@ BLACKPNG;
      *
      * @return mixed
      */
-    public function getProperty($key)
-    {
+    public function getProperty($key) {
         return isset($this->_properties[$key]) ? $this->_properties[$key] : null;
     }
 
@@ -504,8 +479,7 @@ BLACKPNG;
      * @param string $filename
      * @param int    $round
      */
-    private function _getFileInfo($filename, $round = 2)
-    {
+    private function _getFileInfo($filename, $round = 2) {
         $ext = array('B', 'KB', 'MB', 'GB');
 
         $this->_properties['filepath'] = $filename;
@@ -515,7 +489,7 @@ BLACKPNG;
         for ($i = 0; $size > 1024 && $i < count($ext) - 1; $i++) {
             $size /= 1024;
         }
-        $this->_properties['filesize_formatted'] = round($size, $round).$ext[$i];
+        $this->_properties['filesize_formatted'] = round($size, $round) . $ext[$i];
         $this->_properties['original_width'] = $this->getImageWidth();
         $this->_properties['original_height'] = $this->getImageHeight();
     }
@@ -523,8 +497,7 @@ BLACKPNG;
     /**
      * Cloning an image.
      */
-    public function __clone()
-    {
+    public function __clone() {
         $original = $this->image;
         $copy = imagecreatetruecolor($this->getImageWidth(), $this->getImageHeight());
         imagealphablending($copy, false);
@@ -534,4 +507,5 @@ BLACKPNG;
 
         $this->image = $copy;
     }
+
 }

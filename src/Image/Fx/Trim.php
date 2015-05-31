@@ -27,6 +27,8 @@ class Trim extends FxBase implements PluginInterface
         $this->_away = $away;
         $this->_tolerance = $tolerance;
         $this->_feather = $feather;
+        
+        return $this;
     }
 
     public function generate()

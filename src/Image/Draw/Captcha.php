@@ -37,11 +37,9 @@ class Captcha extends DrawBase implements PluginInterface
     {
         if (file_exists($font)) {
             $this->_arr_ttf_font[] = $font;
-
-            return true;
-        } else {
-            return false;
         }
+        
+        return $this;
     }
 
     public function setTextSize($size)
@@ -112,5 +110,7 @@ class Captcha extends DrawBase implements PluginInterface
             
             $x_pos += $ld['width'];
         }
+        
+        return true;
     }
 }

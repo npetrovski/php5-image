@@ -1,5 +1,5 @@
 <?php
-ini_set("memory_limit", "128M");
+ini_set("memory_limit", "512M");
 
 // Ensure library/ is on include_path
 set_include_path(implode(PATH_SEPARATOR, array(
@@ -7,7 +7,11 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
 )));
 
-require 'Image\Autoloader.php';
-
-Image\Autoloader::register();
+// set up an autoload for Zend / Pear style class loading
+spl_autoload_register(function ($class) {
+    if (0 === strpos($class, 'Image')) {
+        $class = str_replace('\\', '/', $class);
+        require($class . '.php');
+    }
+});
 

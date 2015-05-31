@@ -20,6 +20,8 @@ class Ripple extends FxBase implements PluginInterface
         $this->_frequency = $frequency;
         $this->_amplitude = $amplitude;
         $this->_wrap_around = $wrap_around;
+        
+        return $this;
     }
 
     public function generate()

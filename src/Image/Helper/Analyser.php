@@ -223,11 +223,11 @@ class Analyser extends HelperBase implements PluginInterface
             for ($x = 0; $x < $width; $x++) {
                 $color = $this->_owner->imageColorAt($x, $y);
                 $arrColor = Color::intColorToArrayColor($color);
-                $this->__count_colours[$color]++;
-                $this->__count_a[$arrColor['alpha']]++;
-                $this->__count_r[$arrColor['red']]++;
-                $this->__count_g[$arrColor['green']]++;
-                $this->__count_b[$arrColor['blue']]++;
+                @$this->__count_colours[$color]++;
+                @$this->__count_a[$arrColor['alpha']]++;
+                @$this->__count_r[$arrColor['red']]++;
+                @$this->__count_g[$arrColor['green']]++;
+                @$this->__count_b[$arrColor['blue']]++;
             }
         }
         $this->__analyse_complete = true;
@@ -238,9 +238,9 @@ class Analyser extends HelperBase implements PluginInterface
         foreach (array_keys($this->__count_colours) as $color) {
             $arrColor = Color::intColorToArrayColor($color);
             list($h, $s, $b) = $this->hsb($arrColor['red'], $arrColor['green'], $arrColor['blue']);
-            $this->__count_hue[$h]++;
-            $this->__count_saturation[$s]++;
-            $this->__count_brightness[$b]++;
+            @$this->__count_hue[$h]++;
+            @$this->__count_saturation[$s]++;
+            @$this->__count_brightness[$b]++;
         }
 
         $this->__analyse_HSB_complete = true;
@@ -248,6 +248,7 @@ class Analyser extends HelperBase implements PluginInterface
 
     private function arrayAvg($array)
     {
+        $t = $s = 0;
         foreach ($array as $k => $v) {
             $t += $k * $v;
             $s += $v;

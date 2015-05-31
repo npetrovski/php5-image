@@ -30,7 +30,7 @@ QQsAAogJOuw6aAFAADFBx4QHLQAIICbogPWgBQABxAQdTR+0ACCAQP3eP0DMPFgdCBBgAJ273bQUqcwV
 AAAAAElFTkSuQmCC=
 CORNERPNG;
 
-    public function __construct($radius_x = 0, $radius_y = 0)
+    public function __construct($radius_x = 10, $radius_y = 10)
     {
         $this->setRadius($radius_x, $radius_y);
     }
@@ -110,5 +110,7 @@ CORNERPNG;
                 }
             }
         }
+        
+        return true;
     }
 }

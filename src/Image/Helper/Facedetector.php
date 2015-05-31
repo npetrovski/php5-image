@@ -23,6 +23,8 @@ class Facedetector extends HelperBase implements PluginInterface
                        $this->face['x'] + $this->face['w'],
                        $this->face['y'] + $this->face['w'],
                        Color::hexColorToIntColor($color));
+        
+        return $this;
     }
 
     public function generate()
