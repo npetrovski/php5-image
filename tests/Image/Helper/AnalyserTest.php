@@ -36,7 +36,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $image->attach($this->object);
-        $image->openImage('image.png');
+        $image->openImage(dirname(__FILE__) . '/../../image.png');
 
         $this->assertEquals($this->object->countColors(), 19);
         $image->destroyImage();
@@ -49,7 +49,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $image->attach($this->object);
-        $image->openImage('image.png');
+        $image->openImage(dirname(__FILE__) . '/../../image.png');
         
         $this->assertEquals($this->object->averageChannel('r'), 218);
         $this->assertEquals($this->object->averageChannel('g'), 218);
@@ -64,7 +64,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $image->attach($this->object);
-        $image->openImage('image.png');
+        $image->openImage(dirname(__FILE__) . '/../../image.png');
         
         $this->assertEquals($this->object->minChannel('r'), 1);
         $this->assertEquals($this->object->minChannel('g'), 1);
@@ -79,7 +79,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $image->attach($this->object);
-        $image->openImage('image.png');
+        $image->openImage(dirname(__FILE__) . '/../../image.png');
         
         $this->assertEquals($this->object->maxChannel('r'), 255);
         $this->assertEquals($this->object->maxChannel('g'), 255);
@@ -94,7 +94,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $image->attach($this->object);
-        $image->openImage('lightgreen.png');
+        $image->openImage(dirname(__FILE__) . '/../../lightgreen.png');
         
         $this->assertEquals($this->object->hue(3, 3), 120);
         $image->destroyImage();
@@ -107,7 +107,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $image->attach($this->object);
-        $image->openImage('lightgreen.png');
+        $image->openImage(dirname(__FILE__) . '/../../lightgreen.png');
         
         $this->assertEquals($this->object->saturation(3, 3), 50);
         $image->destroyImage();
@@ -120,7 +120,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $image->attach($this->object);
-        $image->openImage('lightgreen.png');
+        $image->openImage(dirname(__FILE__) . '/../../lightgreen.png');
         
         $this->assertEquals($this->object->brightness(3, 3), 100);
         $image->destroyImage();
@@ -133,7 +133,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $image->attach($this->object);
-        $image->openImage('green.png');
+        $image->openImage(dirname(__FILE__) . '/../../green.png');
         
         $this->assertEquals($this->object->imageHue(), 120);
         $image->destroyImage();
@@ -146,7 +146,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $image->attach($this->object);
-        $image->openImage('green.png');
+        $image->openImage(dirname(__FILE__) . '/../../green.png');
         
         $this->assertEquals($this->object->imageSaturation(), 100);
         $image->destroyImage();
@@ -159,7 +159,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     {
         $image = new Canvas();
         $analyser = $image->attach($this->object);
-        $image->openImage('green.png');
+        $image->openImage(dirname(__FILE__) . '/../../green.png');
         
         $this->assertEquals($this->object->imageBrightness(), 100);
         $image->destroyImage();

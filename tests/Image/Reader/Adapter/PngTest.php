@@ -34,7 +34,7 @@ class PngTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetImage()
     {
-        $image = $this->object->getImage('image.png');
+        $image = $this->object->getImage(dirname(__FILE__) . '/../../../image.png');
         $this->assertTrue(($image && 'gd' == get_resource_type($image)));
     }
 }

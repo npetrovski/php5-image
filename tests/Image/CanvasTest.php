@@ -43,7 +43,7 @@ class CanvasTest extends \PHPUnit_Framework_TestCase {
     public function testAttach() {
         $this->object->attach(new Helper\Analyser());
 
-        $this->assertNotEmpty($this->object->openImage("image.png")); //32 bit PNG image
+        $this->assertNotEmpty($this->object->openImage(dirname(__FILE__) . '/../image.png')); //32 bit PNG image
         $this->assertNotEmpty($this->object->apply());
     }
 
@@ -104,7 +104,7 @@ class CanvasTest extends \PHPUnit_Framework_TestCase {
      * @covers Image\Canvas::openImage
      */
     public function testOpenImage() {
-        $this->object->openImage("image.png");
+        $this->object->openImage(dirname(__FILE__) . '/../image.png');
 
         $this->assertTrue((isset($this->object->image) && 'gd' == get_resource_type($this->object->image)));
     }
@@ -214,10 +214,10 @@ class CanvasTest extends \PHPUnit_Framework_TestCase {
      * @covers Image\Canvas::imageIsTrueColor
      */
     public function testImageIsTrueColor() {
-        $this->assertNotEmpty($this->object->openImage("image.gif"));
+        $this->assertNotEmpty($this->object->openImage(dirname(__FILE__) . '/../image.gif'));
         $this->assertEquals($this->object->imageIsTrueColor(), false);
 
-        $this->assertNotEmpty($this->object->openImage("image.jpg"));
+        $this->assertNotEmpty($this->object->openImage(dirname(__FILE__) . '/../image.jpg'));
         $this->assertEquals($this->object->imageIsTrueColor(), true);
     }
 
@@ -225,11 +225,11 @@ class CanvasTest extends \PHPUnit_Framework_TestCase {
      * @covers Image\Canvas::imageColorAt
      */
     public function testImageColorAt() {
-        $this->assertNotEmpty($this->object->openImage("image.gif")); //8 bit GIF image
+        $this->assertNotEmpty($this->object->openImage(dirname(__FILE__) . '/../image.gif')); //8 bit GIF image
         $this->assertEquals($this->object->imageColorAt(3, 3), 255); //Solid blue
 
 
-        $this->assertNotEmpty($this->object->openImage("image.png")); //32 bit PNG image
+        $this->assertNotEmpty($this->object->openImage(dirname(__FILE__) . '/../image.png')); //32 bit PNG image
         $this->assertEquals($this->object->imageColorAt(3, 3), 255); //Solid blue
     }
 
@@ -296,7 +296,7 @@ class CanvasTest extends \PHPUnit_Framework_TestCase {
      */
     public function testGetProperty() {
         
-        $this->object->openImage('image.png');
+        $this->object->openImage(dirname(__FILE__) . '/../image.png');
         
         $this->assertEquals('image.png', $this->object->getProperty('filename'));
     }

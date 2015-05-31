@@ -32,7 +32,7 @@ class PsdTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetImage()
     {
-        $image = $this->object->getImage('image.psd');
+        $image = $this->object->getImage(dirname(__FILE__) . '/../../../image.psd');
         $this->assertTrue(($image && 'gd' == get_resource_type($image)));
     }
 }

@@ -34,7 +34,7 @@ class DefaultReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testRead()
     {
-        $image = $this->object->read('image.png');
+        $image = $this->object->read(dirname(__FILE__) . '/../../image.png');
         
         $this->assertTrue(($image && 'gd' == get_resource_type($image)));
         

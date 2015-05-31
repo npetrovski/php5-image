@@ -48,7 +48,7 @@ class WatermarkTest extends \PHPUnit_Framework_TestCase {
         $image = new Canvas(200, 200, '#000000');
         $image->attach($this->object);
 
-        $this->object->setWatermark('image.png');
+        $this->object->setWatermark(dirname(__FILE__) . '/../../image.png');
 
         $this->assertTrue($this->object->generate());
     }

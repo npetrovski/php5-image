@@ -34,7 +34,7 @@ class GifTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetImage()
     {
-        $image = $this->object->getImage('image.gif');
+        $image = $this->object->getImage(dirname(__FILE__) . '/../../../image.gif');
         $this->assertTrue(($image && 'gd' == get_resource_type($image)));
     }
 }

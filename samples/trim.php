@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/bootstrap.php';
+require_once dirname(__FILE__) . '/../autoload.php';
 
 $image = new Image\Canvas(200, 100, 'CCCCDD', 60);
 

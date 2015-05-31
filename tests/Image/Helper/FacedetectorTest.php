@@ -33,7 +33,7 @@ class FacedetectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDrawFaceRectangle()
     {
-        $image = new Canvas('portrait.jpg');
+        $image = new Canvas(dirname(__FILE__) . '/../../portrait.jpg');
         $image->attach($this->object);
         $image->apply();
         
@@ -45,7 +45,7 @@ class FacedetectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testGenerate()
     {
-        $image = new Canvas('portrait.jpg');
+        $image = new Canvas(dirname(__FILE__) . '/../../portrait.jpg');
         $image->attach($this->object);
                 
         $this->assertTrue($this->object->generate());

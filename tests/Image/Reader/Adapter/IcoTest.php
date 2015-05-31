@@ -34,7 +34,7 @@ class IcoTest extends \PHPUnit_Framework_TestCase
      */
     public function testTotalIcons()
     {
-        $this->object->getImage('image.ico');
+        $this->object->getImage(dirname(__FILE__) . '/../../../image.ico');
         
         $this->assertEquals(5, $this->object->totalIcons());
     }
@@ -44,7 +44,7 @@ class IcoTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetIconInfo()
     {
-        $this->object->getImage('image.ico');
+        $this->object->getImage(dirname(__FILE__) . '/../../../image.ico');
         
         $this->assertInternalType('array', $this->object->getIconInfo(0));
         
@@ -71,7 +71,7 @@ class IcoTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetImage()
     {
-        $image = $this->object->getImage('image.ico');
+        $image = $this->object->getImage(dirname(__FILE__) . '/../../../image.ico');
         $this->assertTrue(($image && 'gd' == get_resource_type($image)));
     }
 }
